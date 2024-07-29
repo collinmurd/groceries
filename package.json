@@ -1,0 +1,13 @@
+{
+  "name": "groceries",
+  "version": "1.0.0",
+  "scripts": {
+    "app": "npm start --workspace=app",
+    "server": "npm start --workspace=server",
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "workspaces": [
+    "app",
+    "server"
+  ]
+}
