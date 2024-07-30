@@ -4,7 +4,6 @@ import mongoose from 'mongoose';
 
 import { IItem, Item } from './models'
 
-//For env File
 dotenv.config();
 
 const app: Application = express();
@@ -30,6 +29,18 @@ app.post('/items', (req: Request<any, any, IItem>, res: Response) => {
         res.status(400).send(err.message);
       } else {
         res.status(500).send("Internal Server Error");
+      }
+    });
+});
+
+app.delete('/items/:itemId', (req: Request<any, any, IItem>, res: Response) => {
+  Item.findByIdAndDelete(req.params.itemId)
+    .then(_ => res.status(204).send())
+    .catch(err => {
+      if (err.name == 'CastError') {
+        res.status(404).send('Item not found');
+      } else {
+        res.status(500).send(`Internal Server Error: ${err.name}`);
       }
     });
 });
