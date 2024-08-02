@@ -1,5 +1,11 @@
 import mongoose from "mongoose"
-import IItem from '@groceries/shared'
+import IItemDto from '@groceries/shared'
+
+export interface IItem {
+    description: string,
+    checked: boolean,
+    section?: string
+};
 
 interface IItemMethods {
     dto(): IItem & {id: string}
@@ -13,7 +19,7 @@ const itemSchema = new mongoose.Schema<IItem, ItemModel, IItemMethods>({
     checked: Boolean
 });
 
-itemSchema.methods.dto = function dto() {
+itemSchema.methods.dto = function dto(): IItemDto {
     return {
         id: this._id.toString(),
         description: this.description,

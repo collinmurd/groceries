@@ -2,8 +2,8 @@ import express, { Request, Response , Application } from 'express';
 import dotenv from 'dotenv';
 import mongoose from 'mongoose';
 
-import { Item } from './models'
-import IItem from '@groceries/shared';
+import { IItem, Item } from './models'
+import IItemDto from '@groceries/shared';
 
 dotenv.config();
 
@@ -16,12 +16,12 @@ app.get('/', (req: Request, res: Response) => {
   res.send('Hello there');
 });
 
-app.get('/items', async (req: Request, res: Response) => {
+app.get('/items', async (req: Request, res: Response<IItemDto[]>) => {
   Item.find()
     .then(data => res.send(data.map(item => item.dto())));
 });
 
-app.post('/items', (req: Request<any, any, IItem>, res: Response) => {
+app.post('/items', (req: Request<any, any, IItem>, res: Response<IItemDto | string>) => {
   const data = new Item({...req.body});
   data.save()
     .then(data => res.send(data.dto()))
