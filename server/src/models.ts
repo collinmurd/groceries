@@ -1,10 +1,5 @@
 import mongoose from "mongoose"
-
-export interface IItem {
-    description: string,
-    section?: string,
-    checked?: boolean
-};
+import IItem from '@groceries/shared'
 
 interface IItemMethods {
     dto(): IItem & {id: string}

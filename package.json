@@ -4,10 +4,15 @@
   "scripts": {
     "app": "npm start --workspace=app",
     "server": "npm start --workspace=server",
+    "build": "tsc --build",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "workspaces": [
     "app",
-    "server"
-  ]
+    "server",
+    "shared"
+  ],
+  "dependencies": {
+    "typescript": "^4.9.5"
+  }
 }

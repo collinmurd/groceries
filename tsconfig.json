@@ -1,0 +1,10 @@
+{
+    "compilerOptions": {
+        "outDir": "."
+    },
+    "references": [
+        { "path": "./shared" },
+        { "path": "./app" },
+        { "path": "./server" }
+    ]
+}

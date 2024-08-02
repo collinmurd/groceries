@@ -1,10 +1,10 @@
 {
-  "name": "server",
+  "name": "@groceries/server",
   "version": "0.0.0",
   "description": "Backend for the groceries app",
   "main": "index.js",
   "scripts": {
-    "build": "npx tsc",
+    "build": "tsc --build",
     "start": "node dist/index.js",
     "dev": "nodemon src/index.ts",
     "test": "echo \"Error: no test specified\" && exit 1"
@@ -12,11 +12,10 @@
   "author": "",
   "license": "ISC",
   "devDependencies": {
-    "nodemon": "^3.1.4",
-    "ts-node": "^10.9.2",
-    "typescript": "^5.5.4"
+    "nodemon": "^3.1.4"
   },
   "dependencies": {
+    "@groceries/shared": "^1.0.0",
     "express": "^4.19.2",
     "mongoose": "^8.5.1"
   }

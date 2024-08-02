@@ -2,7 +2,8 @@ import express, { Request, Response , Application } from 'express';
 import dotenv from 'dotenv';
 import mongoose from 'mongoose';
 
-import { IItem, Item } from './models'
+import { Item } from './models'
+import IItem from '@groceries/shared';
 
 dotenv.config();
 
