@@ -2,11 +2,11 @@ import React from 'react';
 import { render, screen } from '@testing-library/react';
 import App from './App';
 import { getItems } from '../services/api'
-import IItemDto from '@groceries/shared/index'
+import { IItem } from '@groceries/shared/index'
 
 jest.mock('../services/api')
 
-const mockData: IItemDto[] = [
+const mockData: IItem[] = [
   {
     id: "1",
     description: "Apples",

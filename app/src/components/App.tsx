@@ -1,15 +1,14 @@
 import React, { useEffect, useState } from 'react';
 import './App.css';
 import List from './List';
-import IItemDto from '@groceries/shared';
+import { IItem } from '@groceries/shared';
 import { getItems } from '../services/api';
 
 function App() {
-  const [items, setItems] = useState<IItemDto[]>([]);
+  const [items, setItems] = useState<IItem[]>([]);
   const [error, setError] = useState<string>("");
 
   useEffect(() => {
-    console.log('effecting...')
     getItems()
       .then(data => setItems(data))
       .catch(err => {

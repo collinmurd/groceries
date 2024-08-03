@@ -1,7 +1,7 @@
 import mongoose from "mongoose"
-import IItemDto from '@groceries/shared'
+import { IItem } from '@groceries/shared'
 
-export interface IItem {
+export interface IItemDao {
     description: string,
     checked: boolean,
     section?: string
@@ -11,15 +11,15 @@ interface IItemMethods {
     dto(): IItem & {id: string}
 };
 
-type ItemModel = mongoose.Model<IItem, {}, IItemMethods>;
+type ItemModel = mongoose.Model<IItemDao, {}, IItemMethods>;
 
-const itemSchema = new mongoose.Schema<IItem, ItemModel, IItemMethods>({
+const itemSchema = new mongoose.Schema<IItemDao, ItemModel, IItemMethods>({
     description: {type: String, required: true},
     section: String,
     checked: Boolean
 });
 
-itemSchema.methods.dto = function dto(): IItemDto {
+itemSchema.methods.dto = function dto(): IItem {
     return {
         id: this._id.toString(),
         description: this.description,
@@ -28,4 +28,4 @@ itemSchema.methods.dto = function dto(): IItemDto {
     }
 }
 
-export const Item = mongoose.model<IItem, ItemModel>('Item', itemSchema);
+export const Item = mongoose.model<IItemDao, ItemModel>('Item', itemSchema);

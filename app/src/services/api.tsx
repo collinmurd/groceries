@@ -1,4 +1,4 @@
-import IItemDto from "@groceries/shared";
+import { IItem } from "@groceries/shared";
 
 const GROCERIES_API_URL = "http://localhost:8000"
 
@@ -8,7 +8,7 @@ export class GroceriesApiError extends Error {
   }
 }
 
-export async function getItems(): Promise<IItemDto[]> {
+export async function getItems(): Promise<IItem[]> {
   return fetch(`${GROCERIES_API_URL}/items`)
     .then(resp => {
       if (!resp.ok) {

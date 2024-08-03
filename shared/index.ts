@@ -1,5 +1,5 @@
 
-export default interface IItemDto {
+export interface IItem {
     id: string,
     description: string,
     section?: string,

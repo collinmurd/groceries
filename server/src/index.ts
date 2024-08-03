@@ -2,8 +2,8 @@ import express, { Request, Response , Application } from 'express';
 import dotenv from 'dotenv';
 import mongoose from 'mongoose';
 
-import { IItem, Item } from './models'
-import IItemDto from '@groceries/shared';
+import { IItemDao, Item } from './models'
+import { IItem } from '@groceries/shared';
 
 dotenv.config();
 
@@ -23,12 +23,12 @@ app.get('/', (req: Request, res: Response) => {
   res.send('Hello there');
 });
 
-app.get('/items', async (req: Request, res: Response<IItemDto[]>) => {
+app.get('/items', async (req: Request, res: Response<IItem[]>) => {
   Item.find()
     .then(data => res.send(data.map(item => item.dto())));
 });
 
-app.post('/items', (req: Request<any, any, IItem>, res: Response<IItemDto | string>) => {
+app.post('/items', (req: Request<any, any, IItemDao>, res: Response<IItem | string>) => {
   const data = new Item({...req.body});
   data.save()
     .then(data => res.send(data.dto()))
@@ -41,7 +41,7 @@ app.post('/items', (req: Request<any, any, IItem>, res: Response<IItemDto | stri
     });
 });
 
-app.delete('/items/:itemId', (req: Request<any, any, IItem>, res: Response) => {
+app.delete('/items/:itemId', (req: Request<any, any, IItemDao>, res: Response) => {
   Item.findByIdAndDelete(req.params.itemId)
     .then(_ => res.status(204).send())
     .catch(err => {

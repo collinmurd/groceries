@@ -1,12 +1,12 @@
 import React from 'react';
 import './List.css';
-import IItemDto from '@groceries/shared'
+import { IItem } from '@groceries/shared'
 
-function List(props: {items: IItemDto[]}) {
+function List(props: {items: IItem[]}) {
 
   // split items into sections
-  const noSection: IItemDto[] = [];
-  const sectionedItems: {[key: string]: IItemDto[]} = {}
+  const noSection: IItem[] = [];
+  const sectionedItems: {[key: string]: IItem[]} = {}
   props.items.forEach(item => {
     if (!item.section) {
       noSection.push(item);
@@ -32,7 +32,7 @@ function List(props: {items: IItemDto[]}) {
   )
 }
 
-function Section(props: {name: string, items: IItemDto[]}) {
+function Section(props: {name: string, items: IItem[]}) {
   const listItems = props.items.map(item => 
     <li key={item.id}>
       <Item item={item}/>
@@ -48,7 +48,7 @@ function Section(props: {name: string, items: IItemDto[]}) {
   )
 }
 
-function Item(props: {item: IItemDto}) {
+function Item(props: {item: IItem}) {
   return (
     <div>
       <input type="checkbox" defaultChecked={props.item.checked} />
