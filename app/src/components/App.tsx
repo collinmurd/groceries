@@ -2,7 +2,7 @@ import React, { useEffect, useState } from 'react';
 import './App.css';
 import List from './List';
 import IItemDto from '@groceries/shared';
-import { getItems } from '../api';
+import { getItems } from '../services/api';
 
 function App() {
   const [items, setItems] = useState<IItemDto[]>([]);
