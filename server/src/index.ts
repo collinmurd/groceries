@@ -41,6 +41,20 @@ app.post('/items', (req: Request<any, any, IItemDao>, res: Response<IItem | stri
     });
 });
 
+app.put('/items/:itemId', (req: Request<any, any, IItemDao>, res: Response) => {
+  Item.findByIdAndUpdate(req.params.itemId, {...req.body}, {new: true})
+    .then(data => {
+      if (data) {
+        res.send(data.dto())
+      } else {
+        res.status(404).send("Not Found")
+      }
+    })
+    .catch(err => {
+      res.status(500).send("Internal Server Error")
+    });
+});
+
 app.delete('/items/:itemId', (req: Request<any, any, IItemDao>, res: Response) => {
   Item.findByIdAndDelete(req.params.itemId)
     .then(_ => res.status(204).send())
