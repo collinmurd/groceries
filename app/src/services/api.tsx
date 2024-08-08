@@ -8,8 +8,21 @@ export class GroceriesApiError extends Error {
   }
 }
 
-export async function getItems(): Promise<IItem[]> {
-  return fetch(`${GROCERIES_API_URL}/items`)
+type HttpMethod = 'GET' | 'POST' | 'PUT' | 'DELETE'
+
+async function call(method: HttpMethod, path: string, body: any = null) {
+  var headers = new Headers();
+  var opts: RequestInit = {
+    method: method,
+    headers: headers
+  };
+
+  if (body) {
+    opts.body = JSON.stringify(body);
+    headers.append('Content-Type', 'application/json');
+  }
+
+  return fetch(`${GROCERIES_API_URL}${path}`, opts)
     .then(resp => {
       if (!resp.ok) {
         throw new GroceriesApiError(resp.statusText)
@@ -17,5 +30,14 @@ export async function getItems(): Promise<IItem[]> {
       return resp
     })
     .then(resp => resp.json())
-    .catch(err => {throw new GroceriesApiError(err)})
+    .catch(err => {throw new GroceriesApiError(err)});
+}
+
+export async function getItems(): Promise<IItem[]> {
+  return call('GET', '/items');
+}
+
+export async function updateItem(item: IItem): Promise<IItem> {
+  const { id, ...data } = item;
+  return call('PUT', `/items/${item.id}`, data);
 }

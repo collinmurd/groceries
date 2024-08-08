@@ -1,6 +1,7 @@
 import React from 'react';
 import './List.css';
 import { IItem } from '@groceries/shared'
+import { updateItem } from '../services/api';
 
 function List(props: {items: IItem[]}) {
 
@@ -49,9 +50,15 @@ function Section(props: {name: string, items: IItem[]}) {
 }
 
 function Item(props: {item: IItem}) {
+  function handleChecked(event: React.ChangeEvent<HTMLInputElement>) {
+    props.item.checked = !props.item.checked;
+    updateItem(props.item)
+      .catch(_ => props.item.checked = !props.item.checked); // if the call fails, switch back
+  }
+
   return (
     <div>
-      <input type="checkbox" defaultChecked={props.item.checked} />
+      <input type="checkbox" defaultChecked={props.item.checked} onChange={handleChecked} />
       {props.item.description}
     </div>
   )

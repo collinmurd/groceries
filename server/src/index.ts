@@ -4,16 +4,31 @@ import mongoose from 'mongoose';
 
 import { IItemDao, Item } from './models'
 import { IItem } from '@groceries/shared';
+import { pinoHttp } from 'pino-http';
 
 dotenv.config();
+
+const INTERNAL_SERVER_ERROR = "Internal Server Error";
 
 const app: Application = express();
 const port = process.env.PORT || 8000;
 
 app.use(express.json());
+app.use(pinoHttp({
+  serializers: {
+    req: (req: Request) => ({
+      id: req.id,
+      method: req.method,
+      url: req.url
+    }),
+    res: (res: Response) => ({
+      statusCode: res.statusCode
+    })
+  }
+}));
 
 app.use(function (req, res, next) {
-    res.header("Access-Control-Allow-Origin", "*");
+    res.header("Access-Control-Allow-Origin", "http://localhost:3000");
     res.header("Access-Control-Allow-Headers", "Origin, X-Requested-With, Content-Type, Accept, authorization");
     res.header("Access-Control-Allow-Methods", "GET, POST, OPTIONS, PUT, DELETE");
     next();
@@ -23,9 +38,10 @@ app.get('/', (req: Request, res: Response) => {
   res.send('Hello there');
 });
 
-app.get('/items', async (req: Request, res: Response<IItem[]>) => {
+app.get('/items', async (req: Request, res: Response) => {
   Item.find()
-    .then(data => res.send(data.map(item => item.dto())));
+    .then(data => res.send(data.map(item => item.dto())))
+    .catch(err => res.status(500).send(INTERNAL_SERVER_ERROR))
 });
 
 app.post('/items', (req: Request<any, any, IItemDao>, res: Response<IItem | string>) => {
@@ -36,7 +52,7 @@ app.post('/items', (req: Request<any, any, IItemDao>, res: Response<IItem | stri
       if (err.name === 'ValidationError') {
         res.status(400).send(err.message);
       } else {
-        res.status(500).send("Internal Server Error");
+        res.status(500).send(INTERNAL_SERVER_ERROR);
       }
     });
 });
@@ -51,7 +67,7 @@ app.put('/items/:itemId', (req: Request<any, any, IItemDao>, res: Response) => {
       }
     })
     .catch(err => {
-      res.status(500).send("Internal Server Error")
+      res.status(500).send(INTERNAL_SERVER_ERROR)
     });
 });
 
@@ -62,7 +78,7 @@ app.delete('/items/:itemId', (req: Request<any, any, IItemDao>, res: Response) =
       if (err.name == 'CastError') {
         res.status(404).send('Item not found');
       } else {
-        res.status(500).send(`Internal Server Error: ${err.name}`);
+        res.status(500).send(INTERNAL_SERVER_ERROR);
       }
     });
 });
