@@ -33,7 +33,7 @@ function List(props: {items: IItem[]}) {
   )
 }
 
-function Section(props: {name: string, items: IItem[]}) {
+export function Section(props: {name: string, items: IItem[]}) {
   const listItems = props.items.map(item => 
     <li key={item.id}>
       <Item item={item}/>
@@ -49,16 +49,20 @@ function Section(props: {name: string, items: IItem[]}) {
   )
 }
 
-function Item(props: {item: IItem}) {
+export function Item(props: {item: IItem}) {
   function handleChecked(event: React.ChangeEvent<HTMLInputElement>) {
     props.item.checked = !props.item.checked;
+    console.log('clicked')
     updateItem(props.item)
       .catch(_ => props.item.checked = !props.item.checked); // if the call fails, switch back
   }
 
   return (
     <div>
-      <input type="checkbox" defaultChecked={props.item.checked} onChange={handleChecked} />
+      <input
+        type="checkbox"
+        defaultChecked={props.item.checked}
+        onChange={handleChecked} />
       {props.item.description}
     </div>
   )
