@@ -41,3 +41,7 @@ export async function updateItem(item: IItem): Promise<IItem> {
   const { id, ...data } = item;
   return call('PUT', `/items/${item.id}`, data);
 }
+
+export async function deleteItem(item: IItem) {
+  return call('DELETE', `/items/${item.id}`);
+}
