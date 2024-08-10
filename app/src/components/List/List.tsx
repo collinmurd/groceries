@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import './List.css';
 import { IItem } from '@groceries/shared'
-import { getItems } from '../../services/api';
+import { deleteItem, getItems } from '../../services/api';
 import { Section } from '../Section/Section';
 
 export function List(props: {setError: Function}) {
@@ -15,6 +15,11 @@ export function List(props: {setError: Function}) {
         props.setError("Failed to get grocery list... try paper");
       })
   }, []);
+
+  function removeItem(item: IItem) {
+    deleteItem(item)
+      .then(_ => setItems(items.filter(i => i != item)));
+  }
 
   // split items into sections
   const noSection: IItem[] = [];
@@ -33,12 +38,12 @@ export function List(props: {setError: Function}) {
 
   // create section components
   const sections = Object.entries(sectionedItems).map(entry =>
-    <Section key={entry[0]} name={entry[0]} items={entry[1]}/>
+    <Section key={entry[0]} name={entry[0]} items={entry[1]} removeItem={removeItem}/>
   );
 
   return (
     <div>
-      <Section key="noSection" name="" items={noSection} />
+      <Section key="noSection" name="" items={noSection} removeItem={removeItem}/>
       {sections}
     </div>
   )

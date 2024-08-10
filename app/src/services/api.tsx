@@ -29,7 +29,7 @@ async function call(method: HttpMethod, path: string, body: any = null) {
       }
       return resp
     })
-    .then(resp => resp.json())
+    .then(resp => resp.status != 204 ? resp.json() : "")
     .catch(err => {throw new GroceriesApiError(err)});
 }
 

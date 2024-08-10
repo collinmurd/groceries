@@ -10,10 +10,7 @@ export function Item(props: {item: IItem, removeItem: Function}) {
   }
 
   function handleDeleteClicked (event: React.MouseEvent<HTMLButtonElement>) {
-    // deleteItem(props.item)
-      // .then(_ => {
-        props.removeItem(props.item);
-      // });
+    props.removeItem(props.item);
   }
 
   return (

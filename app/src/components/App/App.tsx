@@ -15,7 +15,7 @@ export function App() {
 
   return (
     <div className="App">
-      <List setError={(error) => setError(error)}/>
+      <List setError={(error: string) => setError(error)}/>
     </div>
   );
 }

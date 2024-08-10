@@ -21,6 +21,6 @@ const mockData: IItem[] = [
 
 describe('Render', () => {
   it('should render', () => {
-    render(<Section name={mockName} items={mockData}/>)
+    render(<Section name={mockName} items={mockData} removeItem={jest.fn()}/>)
   });
 });
