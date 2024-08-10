@@ -1,26 +1,63 @@
 import { IItem } from "@groceries/shared";
-import React from "react";
+import React, { useState } from "react";
 import { updateItem } from '../../services/api';
 
-export function Item(props: {item: IItem, removeItem: Function}) {
+type ItemProps = {
+  item: IItem,
+  removeItem: Function,
+  edit: boolean
+}
+
+export function Item(props: {item: IItem, removeItem: Function, edit: boolean}) {
+  const [itemDescription, setItemDescription] = useState(props.item.description);
+  const [editing, setEditing] = useState(props.edit);
+
   function handleChecked(event: React.ChangeEvent<HTMLInputElement>) {
     props.item.checked = !props.item.checked;
     updateItem(props.item)
       .catch(_ => props.item.checked = !props.item.checked); // if the call fails, switch back
   }
 
-  function handleDeleteClicked (event: React.MouseEvent<HTMLButtonElement>) {
+  function handleDeleteClicked(event: React.MouseEvent<HTMLButtonElement>) {
     props.removeItem(props.item);
   }
 
-  return (
-    <div>
-      <input
-        type="checkbox"
-        defaultChecked={props.item.checked}
-        onChange={handleChecked} />
-      {props.item.description}
-      <button aria-label={'Delete ' + props.item.description} onClick={handleDeleteClicked}>[X]</button>
-    </div>
-  )
+  function handleEditClicked(event: React.MouseEvent<HTMLButtonElement>) {
+    setEditing(true);
+  }
+
+  function handleEditFinished(event: React.FocusEvent<HTMLInputElement>) {
+    props.item.description = itemDescription;
+    setEditing(false);
+    updateItem(props.item);
+  }
+
+  if (!editing) {
+    return (
+      <div>
+        <input
+          type="checkbox"
+          defaultChecked={props.item.checked}
+          onChange={handleChecked} />
+        {props.item.description}
+        <button aria-label={'Edit ' + props.item.description} onClick={handleEditClicked}>Edit</button>
+        <button aria-label={'Delete ' + props.item.description} onClick={handleDeleteClicked}>[X]</button>
+      </div>
+    )
+  } else {
+    return (
+      <div>
+        <input
+          type="checkbox"
+          defaultChecked={props.item.checked}
+          onChange={handleChecked} />
+        <input
+          type="text"
+          value={itemDescription} 
+          onBlur={handleEditFinished}
+          onChange={e => setItemDescription(e.target.value)} />
+        <button aria-label={'Delete ' + props.item.description} onClick={handleDeleteClicked}>[X]</button>
+      </div>
+    )
+  }
 }
