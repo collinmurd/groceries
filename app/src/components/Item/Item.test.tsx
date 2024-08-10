@@ -61,4 +61,16 @@ describe('Check an item', () => {
     await user.click(appleCheckbox);
     expect(updateItem).toHaveBeenCalled();
   });
-})
+});
+
+describe('Delete an item', () => {
+
+  it('should call removeItem when delete button is clicked', async () => {
+    const removeItem = jest.fn();
+    const user = userEvent.setup();
+    render(<Item item={mockData} removeItem={removeItem}/>)
+
+    await user.click(screen.getByRole('button'));
+    expect(removeItem).toHaveBeenCalled();
+  });
+});

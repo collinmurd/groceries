@@ -20,7 +20,7 @@ export function Item(props: {item: IItem, removeItem: Function}) {
         defaultChecked={props.item.checked}
         onChange={handleChecked} />
       {props.item.description}
-      <button onClick={handleDeleteClicked}>[X]</button>
+      <button aria-label={'Delete ' + props.item.description} onClick={handleDeleteClicked}>[X]</button>
     </div>
   )
 }
