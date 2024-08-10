@@ -12,9 +12,10 @@ export function App() {
       </div>
     )
   }
+
   return (
     <div className="App">
-      <List setError={setError}/>
+      <List setError={(error) => setError(error)}/>
     </div>
   );
 }

@@ -51,9 +51,6 @@ describe('Retrieve data', () => {
 
 
 describe('render List', () => {
-  beforeEach(() => {
-  });
-
   it('should render each section', async () => {
     (getItems as jest.Mock).mockReturnValue(Promise.resolve(mockData));
     render(<List setError={jest.fn()}/>);
@@ -74,5 +71,4 @@ describe('render List', () => {
     expect(meatSection?.contains(screen.getByText('Chicken'))).toBeTruthy();
     expect(meatSection?.contains(screen.getByText('Chocolate'))).toBeFalsy();
   });
-
 });
