@@ -1,16 +1,21 @@
 import { IItem } from "@groceries/shared";
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { updateItem } from '../../services/api';
-
-type ItemProps = {
-  item: IItem,
-  removeItem: Function,
-  edit: boolean
-}
 
 export function Item(props: {item: IItem, removeItem: Function, edit: boolean}) {
   const [itemDescription, setItemDescription] = useState(props.item.description);
   const [editing, setEditing] = useState(props.edit);
+
+  useEffect(() => {
+    const handleEscape = (e: any) => {
+      if (editing && e.key === "Escape") {
+        handleEditFinished();
+      };
+    }
+    window.addEventListener('keydown', handleEscape);
+
+    return () => {window.removeEventListener('keydown', handleEscape)}
+  });
 
   function handleChecked(event: React.ChangeEvent<HTMLInputElement>) {
     props.item.checked = !props.item.checked;
@@ -26,7 +31,7 @@ export function Item(props: {item: IItem, removeItem: Function, edit: boolean}) 
     setEditing(true);
   }
 
-  function handleEditFinished(event: React.FocusEvent<HTMLInputElement>) {
+  function handleEditFinished() {
     props.item.description = itemDescription;
     setEditing(false);
     updateItem(props.item);
@@ -54,6 +59,7 @@ export function Item(props: {item: IItem, removeItem: Function, edit: boolean}) 
         <input
           type="text"
           value={itemDescription} 
+          autoFocus
           onBlur={handleEditFinished}
           onChange={e => setItemDescription(e.target.value)} />
         <button aria-label={'Delete ' + props.item.description} onClick={handleDeleteClicked}>[X]</button>
