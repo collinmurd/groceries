@@ -8,7 +8,7 @@ export function Item(props: {item: IItem, removeItem: Function, edit: boolean}) 
 
   useEffect(() => {
     const handleEscape = (e: any) => {
-      if (editing && e.key === "Escape") {
+      if (editing && (e.key === "Escape" || e.key === "Enter")) {
         handleEditFinished();
       };
     }
