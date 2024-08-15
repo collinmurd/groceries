@@ -22,17 +22,12 @@ export function List(props: {setError: Function}) {
   }
 
   // split items into sections
-  const noSection: IItem[] = [];
   const sectionedItems: {[key: string]: IItem[]} = {}
   items.forEach(item => {
-    if (!item.section) {
-      noSection.push(item);
+    if (Object.keys(sectionedItems).includes(item.section)) {
+      sectionedItems[item.section].push(item);
     } else {
-      if (Object.keys(sectionedItems).includes(item.section)) {
-        sectionedItems[item.section].push(item);
-      } else {
-        sectionedItems[item.section] = [item];
-      }
+      sectionedItems[item.section] = [item];
     }
   });
 
@@ -43,7 +38,6 @@ export function List(props: {setError: Function}) {
 
   return (
     <div>
-      <Section key="noSection" name="" items={noSection} removeItem={removeItem}/>
       {sections}
     </div>
   )

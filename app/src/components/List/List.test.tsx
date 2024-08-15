@@ -26,11 +26,6 @@ const mockData: IItem[] = [
     section: "Meat",
     checked: false
   },
-  {
-    id: "4",
-    description: "Chocolate",
-    checked: false
-  },
 ]
 
 describe('Retrieve data', () => {
@@ -67,10 +62,8 @@ describe('render List', () => {
     const produceSection = (await screen.findByText('Produce')).parentElement;
     const meatSection = (await screen.findByText('Meat')).parentNode;
     expect(produceSection?.contains(screen.getByText('Apples'))).toBeTruthy();
-    expect(produceSection?.contains(screen.getByText('Chocolate'))).toBeFalsy();
     expect(meatSection?.contains(screen.getByText('Steak'))).toBeTruthy();
     expect(meatSection?.contains(screen.getByText('Chicken'))).toBeTruthy();
-    expect(meatSection?.contains(screen.getByText('Chocolate'))).toBeFalsy();
   });
 });
 

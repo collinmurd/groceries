@@ -4,7 +4,7 @@ import { IItem } from '@groceries/shared'
 export interface IItemDao {
     description: string,
     checked: boolean,
-    section?: string
+    section: string
 };
 
 interface IItemMethods {

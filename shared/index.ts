@@ -2,6 +2,6 @@
 export interface IItem {
     id: string | null,
     description: string,
-    section?: string,
+    section: string,
     checked: boolean
 };
