@@ -37,6 +37,11 @@ export async function getItems(): Promise<IItem[]> {
   return call('GET', '/items');
 }
 
+export async function createItem(item: IItem): Promise<IItem> {
+  const { id, ...data} = item;
+  return call('POST', '/items', data);
+}
+
 export async function updateItem(item: IItem): Promise<IItem> {
   const { id, ...data } = item;
   return call('PUT', `/items/${item.id}`, data);

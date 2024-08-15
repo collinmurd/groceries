@@ -8,7 +8,7 @@ export interface IItemDao {
 };
 
 interface IItemMethods {
-    dto(): IItem & {id: string}
+    dto(): IItem & {id: string | null}
 };
 
 type ItemModel = mongoose.Model<IItemDao, {}, IItemMethods>;

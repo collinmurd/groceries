@@ -85,6 +85,7 @@ app.delete('/items/:itemId', (req: Request<any, any, IItemDao>, res: Response) =
 
 async function main() {
   await mongoose.connect('mongodb://127.0.0.1:27017/groceries');
+  mongoose.Schema.Types.String.checkRequired(v => v != null); // "required" in mongoose by default will reject empty strings, https://github.com/Automattic/mongoose/issues/7150
 
   app.listen(port, () => {
     console.log(`Server is Fire at http://localhost:${port}`);
