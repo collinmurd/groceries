@@ -3,7 +3,7 @@ import React from "react";
 import { Section } from "./Section";
 import { IItem } from "@groceries/shared";
 import userEvent, { UserEvent } from "@testing-library/user-event";
-import { deleteItem } from "../../services/api";
+import { createItem, deleteItem } from "../../services/api";
 
 jest.mock('../../services/api')
 
@@ -29,7 +29,7 @@ describe('Render', () => {
   });
 });
 
-describe('removeItem', () => {
+describe('remove item', () => {
   var user: UserEvent;
   beforeEach(() => {
     (deleteItem as jest.Mock).mockReturnValue(Promise.resolve(""));
@@ -50,3 +50,31 @@ describe('removeItem', () => {
     expect(screen.queryByText('Apples')).toBeNull();
   });
 });
+
+describe('add item', () => {
+  var user: UserEvent;
+  const mockNewItem = {
+    id: "3",
+    description: "",
+    section: "Meat",
+    checked: false
+  }
+  beforeEach(() => {
+    (createItem as jest.Mock).mockReturnValue(Promise.resolve(mockNewItem));
+    user = userEvent.setup();
+  });
+
+  it('should call the create API when the button is clicked', async () => {
+    render(<Section name={mockName} items={[]} />)
+    await user.click(await screen.findByRole('button'));
+
+    expect(createItem).toHaveBeenCalled();
+  });
+
+  it('should add a new item to the list', async () => {
+    render(<Section name={mockName} items={[]} />)
+    await user.click(await screen.findByRole('button'));
+
+    expect(screen.queryByRole('listitem')).toBeInTheDocument();
+  });
+})
