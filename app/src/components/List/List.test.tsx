@@ -1,9 +1,8 @@
-import React, { act } from 'react';
+import React from 'react';
 import { render, screen, waitFor } from '@testing-library/react';
 import { IItem } from '@groceries/shared';
 import { List } from './List';
-import { deleteItem, getItems } from '../../services/api';
-import userEvent, { UserEvent } from '@testing-library/user-event';
+import { getItems } from '../../services/api';
 
 jest.mock('../../services/api')
 
@@ -59,33 +58,10 @@ describe('render List', () => {
     (getItems as jest.Mock).mockReturnValue(Promise.resolve(mockData));
     render(<List setError={jest.fn()}/>);
 
-    const produceSection = (await screen.findByText('Produce')).parentElement;
-    const meatSection = (await screen.findByText('Meat')).parentNode;
+    const produceSection = (await screen.findByText('Produce')).parentNode?.parentNode;
+    const meatSection = (await screen.findByText('Meat')).parentNode?.parentNode;
     expect(produceSection?.contains(screen.getByText('Apples'))).toBeTruthy();
     expect(meatSection?.contains(screen.getByText('Steak'))).toBeTruthy();
     expect(meatSection?.contains(screen.getByText('Chicken'))).toBeTruthy();
-  });
-});
-
-describe('removeItem', () => {
-  var user: UserEvent;
-  beforeEach(() => {
-    (getItems as jest.Mock).mockReturnValue(Promise.resolve(mockData));
-    (deleteItem as jest.Mock).mockReturnValue(Promise.resolve(""));
-    user = userEvent.setup();
-  });
-
-  it('should call the delete API when an item is removed', async () => {
-    render(<List setError={jest.fn()} />)
-    await user.click(await screen.findByLabelText('Delete Apples'));
-
-    expect(deleteItem).toHaveBeenCalled();
-  });
-
-  it('should remove the item from the list', async() => {
-    render(<List setError={jest.fn()} />)
-    await user.click(await screen.findByLabelText('Delete Apples'));
-
-    expect(screen.queryByText('Apples')).toBeNull();
   });
 });

@@ -2,20 +2,14 @@ import { IItem } from "@groceries/shared";
 import React, { useState } from "react";
 import { Item } from "../Item/Item";
 import './Section.scss'
-import { createItem } from "../../services/api";
+import { createItem, deleteItem } from "../../services/api";
 
 interface ISectionItem extends IItem {
   edit: boolean
 }
 
-export function Section(props: {name: string, items: IItem[], removeItem: Function}) {
-  const [items, updateItems] = useState<ISectionItem[]>(props.items.map(i => ({edit: false, ...i})));
-
-  const sectionItems = items.map(item => 
-    <li key={item.id}>
-      <Item item={item} removeItem={props.removeItem} edit={item.edit}/>
-    </li>
-  );
+export function Section(props: {name: string, items: IItem[]}) {
+  const [items, setItems] = useState<ISectionItem[]>(props.items.map(i => ({edit: false, ...i})));
 
   function handleAddItemClick(event: React.MouseEvent<HTMLButtonElement>) {
     createItem({
@@ -25,9 +19,22 @@ export function Section(props: {name: string, items: IItem[], removeItem: Functi
       checked: false
     }).then(item => {
       items.push({edit: true, ...item});
-      updateItems([...items]);
+      setItems([...items]);
     });
   }
+
+  function removeItem(item: IItem) {
+    deleteItem(item)
+      .then(_ => {
+        setItems(items.filter(i => i.id !== item.id));
+      });
+  }
+
+  const sectionItems = items.map(item => 
+    <li key={item.id}>
+      <Item item={item} removeItem={removeItem} edit={item.edit}/>
+    </li>
+  );
 
   return (
     <div>
