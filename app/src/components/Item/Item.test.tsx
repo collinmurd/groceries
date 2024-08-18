@@ -70,7 +70,7 @@ describe('Delete an item', () => {
     const user = userEvent.setup();
     render(<Item item={mockData} removeItem={removeItem} edit={false} />)
 
-    await user.click(screen.getByRole('button'));
+    await user.click(screen.getByLabelText('Delete Apples'));
     expect(removeItem).toHaveBeenCalled();
   });
 });
@@ -79,7 +79,7 @@ describe('Edit an item', () => {
   it('should open the text box when the edit button is clicked', async () => {
     const removeItem = jest.fn();
     const user = userEvent.setup();
-    render(<Item item={mockData} removeItem={removeItem} edit={true} />)
+    render(<Item item={mockData} removeItem={removeItem} edit={false} />)
 
     await user.click(await screen.findByLabelText('Edit Apples'));
 

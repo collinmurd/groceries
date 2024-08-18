@@ -1,40 +1,54 @@
 import React, { useEffect, useState } from 'react';
 import './List.css';
-import { IItem } from '@groceries/shared'
 import { getItems } from '../../services/api';
-import { Section } from '../Section/Section';
+import { ISectionProps, Section } from '../Section/Section';
 
 export function List(props: {setError: Function}) {
-  const [items, setItems] = useState<IItem[]>([]);
+  const [sections, setSections] = useState<ISectionProps[]>([]);
 
   useEffect(() => {
     getItems()
-      .then(data => setItems(data))
+      .then(data => {
+        // split items into sections
+        const initialSections: {[key: string]: ISectionProps} = {}
+        data.forEach(item => {
+          if (Object.keys(initialSections).includes(item.section)) {
+            initialSections[item.section].items.push(item);
+          } else {
+            initialSections[item.section] = {
+              name: item.section,
+              items: [item],
+              edit: false
+            };
+          }
+        });
+
+        setSections(Object.values(initialSections));
+      })
       .catch(err => {
         console.log(err);
         props.setError("Failed to get grocery list... try paper");
       })
   }, []);
 
-
-  // split items into sections
-  const sectionedItems: {[key: string]: IItem[]} = {}
-  items.forEach(item => {
-    if (Object.keys(sectionedItems).includes(item.section)) {
-      sectionedItems[item.section].push(item);
-    } else {
-      sectionedItems[item.section] = [item];
-    }
-  });
+  function handleNewSectionClicked() {
+    sections.push({
+      name: '',
+      items: [],
+      edit: true
+    });
+    setSections([...sections]);
+  }
 
   // create section components
-  const sections = Object.entries(sectionedItems).map(entry =>
-    <Section key={entry[0]} name={entry[0]} items={entry[1]} />
+  const displayedSections = sections.map(section =>
+    <Section key={section.name} name={section.name} items={section.items} edit={section.edit}/>
   );
 
   return (
     <div>
-      {sections}
+      <button onClick={handleNewSectionClicked}>Add Section</button>
+      {displayedSections}
     </div>
   )
 }

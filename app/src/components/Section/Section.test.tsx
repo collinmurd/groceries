@@ -25,7 +25,7 @@ const mockData: IItem[] = [
 
 describe('Render', () => {
   it('should render', () => {
-    render(<Section name={mockName} items={mockData} />)
+    render(<Section name={mockName} items={mockData} edit={false}/>)
   });
 });
 
@@ -37,14 +37,14 @@ describe('remove item', () => {
   });
 
   it('should call the delete API when an item is removed', async () => {
-    render(<Section name={mockName} items={mockData} />)
+    render(<Section name={mockName} items={mockData} edit={false} />)
     await user.click(await screen.findByLabelText('Delete Steak'));
 
     expect(deleteItem).toHaveBeenCalled();
   });
 
   it('should remove the item from the list', async() => {
-    render(<Section name={mockName} items={mockData} />)
+    render(<Section name={mockName} items={mockData} edit={false} />)
     await user.click(await screen.findByLabelText('Delete Steak'));
 
     expect(screen.queryByText('Apples')).toBeNull();
@@ -65,16 +65,32 @@ describe('add item', () => {
   });
 
   it('should call the create API when the button is clicked', async () => {
-    render(<Section name={mockName} items={[]} />)
+    render(<Section name={mockName} items={[]} edit={false} />)
     await user.click(await screen.findByRole('button'));
 
     expect(createItem).toHaveBeenCalled();
   });
 
   it('should add a new item to the list', async () => {
-    render(<Section name={mockName} items={[]} />)
+    render(<Section name={mockName} items={[]} edit={false} />)
     await user.click(await screen.findByRole('button'));
 
     expect(screen.queryByRole('listitem')).toBeInTheDocument();
   });
-})
+});
+
+describe('editing', () => {
+  var user: UserEvent;
+  beforeEach(() => {
+    user = userEvent.setup();
+    render(<Section name={mockName} items={[]} edit={true} />)
+  });
+
+  it('should set the section name to the input when input is unfocused', async () => {
+    await user.type(screen.getByRole('textbox'), 'New Section');
+    expect(screen.getByRole('textbox')).toHaveValue('New Section')
+
+    await user.keyboard('{Escape}');
+    expect(await screen.findByText('New Section', {selector: 'h3'})).toBeInTheDocument();
+  });
+});

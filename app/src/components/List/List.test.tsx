@@ -3,6 +3,7 @@ import { render, screen, waitFor } from '@testing-library/react';
 import { IItem } from '@groceries/shared';
 import { List } from './List';
 import { getItems } from '../../services/api';
+import userEvent from '@testing-library/user-event';
 
 jest.mock('../../services/api')
 
@@ -63,5 +64,24 @@ describe('render List', () => {
     expect(produceSection?.contains(screen.getByText('Apples'))).toBeTruthy();
     expect(meatSection?.contains(screen.getByText('Steak'))).toBeTruthy();
     expect(meatSection?.contains(screen.getByText('Chicken'))).toBeTruthy();
+  });
+});
+
+describe('add Section', () => {
+  it('should display an "Add Section" button', async () => {
+    (getItems as jest.Mock).mockReturnValue(Promise.resolve([]));
+    render(<List setError={jest.fn()}/>);
+
+    expect(await screen.findByText('Add Section')).toBeInTheDocument();
+  });
+
+  it('should display an input for a new section when clicked', async () => {
+    (getItems as jest.Mock).mockReturnValue(Promise.resolve([]));
+    render(<List setError={jest.fn()}/>);
+    const user = userEvent.setup();
+
+    await user.click(await screen.findByRole('button'));
+
+    expect(await screen.findByRole('textbox'));
   });
 });
