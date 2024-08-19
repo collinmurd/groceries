@@ -39,7 +39,7 @@ export function Item(props: {item: IItem, removeItem: Function, edit: boolean}) 
 
   if (!editing) {
     return (
-      <div>
+      <div className="Item">
         <input
           type="checkbox"
           defaultChecked={props.item.checked}
@@ -51,7 +51,7 @@ export function Item(props: {item: IItem, removeItem: Function, edit: boolean}) 
     )
   } else {
     return (
-      <div>
+      <div className="Item">
         <input
           type="checkbox"
           defaultChecked={props.item.checked}

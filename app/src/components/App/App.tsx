@@ -1,5 +1,4 @@
-import React, { useEffect, useState } from 'react';
-import './App.css';
+import React, { useState } from 'react';
 import { List } from '../List/List';
 
 export function App() {

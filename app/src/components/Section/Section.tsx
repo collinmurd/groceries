@@ -1,7 +1,6 @@
 import { IItem } from "@groceries/shared";
 import React, { useEffect, useState } from "react";
 import { Item } from "../Item/Item";
-import './Section.scss'
 import { createItem, deleteItem } from "../../services/api";
 
 interface ISectionItem extends IItem {

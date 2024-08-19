@@ -1,5 +1,4 @@
 import React, { useEffect, useState } from 'react';
-import './List.css';
 import { getItems } from '../../services/api';
 import { ISectionProps, Section } from '../Section/Section';
 
