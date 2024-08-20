@@ -1,9 +1,11 @@
 import { IItem } from "@groceries/shared";
 import React, { useEffect, useState } from "react";
 import { updateItem } from '../../services/api';
+import { Checkbox } from "@mantine/core";
 
 export function Item(props: {item: IItem, removeItem: Function, edit: boolean}) {
   const [itemDescription, setItemDescription] = useState(props.item.description);
+  const [checked, setChecked] = useState(props.item.checked);
   const [editing, setEditing] = useState(props.edit);
 
   useEffect(() => {
@@ -18,9 +20,13 @@ export function Item(props: {item: IItem, removeItem: Function, edit: boolean}) 
   });
 
   function handleChecked(event: React.ChangeEvent<HTMLInputElement>) {
-    props.item.checked = !props.item.checked;
-    updateItem(props.item)
-      .catch(_ => props.item.checked = !props.item.checked); // if the call fails, switch back
+    updateItem({
+      checked: event.target.checked,
+      description: itemDescription,
+      id: props.item.id,
+      section: props.item.section
+    });
+    setChecked(!checked)
   }
 
   function handleDeleteClicked(event: React.MouseEvent<HTMLButtonElement>) {
@@ -40,9 +46,9 @@ export function Item(props: {item: IItem, removeItem: Function, edit: boolean}) 
   if (!editing) {
     return (
       <div className="Item">
-        <input
+        <Checkbox
           type="checkbox"
-          defaultChecked={props.item.checked}
+          checked={checked}
           onChange={handleChecked} />
         {props.item.description}
         <button aria-label={'Edit ' + props.item.description} onClick={handleEditClicked}>Edit</button>
