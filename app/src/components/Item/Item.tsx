@@ -1,7 +1,10 @@
 import { IItem } from "@groceries/shared";
 import React, { useEffect, useState } from "react";
 import { updateItem } from '../../services/api';
-import { Checkbox } from "@mantine/core";
+import { ActionIcon, Checkbox, Flex, TextInput } from "@mantine/core";
+
+import classes from './Item.module.css'
+import { IconPencil, IconTrash } from "@tabler/icons-react";
 
 export function Item(props: {item: IItem, removeItem: Function, edit: boolean}) {
   const [itemDescription, setItemDescription] = useState(props.item.description);
@@ -43,33 +46,47 @@ export function Item(props: {item: IItem, removeItem: Function, edit: boolean}) 
     updateItem(props.item);
   }
 
-  if (!editing) {
-    return (
-      <div className="Item">
+  var descriptionContent = <span className={classes.itemDescription}>{itemDescription}</span>;
+  var editButtons = (
+    <div>
+      <ActionIcon variant="subtle" aria-label={'Edit ' + itemDescription} onClick={handleEditClicked}>
+        <IconPencil />
+      </ActionIcon>
+      <ActionIcon variant="subtle" aria-label={'Delete ' + itemDescription} onClick={handleDeleteClicked}>
+        <IconTrash />
+      </ActionIcon>
+    </div>
+  );
+
+  if (editing) {
+    descriptionContent = (
+      <TextInput
+        className={classes.itemDescription}
+        value={itemDescription} 
+        autoFocus
+        onBlur={handleEditFinished}
+        onChange={e => setItemDescription(e.target.value)} />
+    );
+
+    editButtons = (
+      <div>
+        <ActionIcon variant="subtle" aria-label={'Delete ' + itemDescription} onClick={handleDeleteClicked}>
+          <IconTrash />
+        </ActionIcon>
+      </div>
+    );
+  }
+
+  return (
+    <Flex align="center" justify="space-between" className={classes.item}>
+      <Flex align="center">
         <Checkbox
           type="checkbox"
           checked={checked}
           onChange={handleChecked} />
-        {props.item.description}
-        <button aria-label={'Edit ' + props.item.description} onClick={handleEditClicked}>Edit</button>
-        <button aria-label={'Delete ' + props.item.description} onClick={handleDeleteClicked}>[X]</button>
-      </div>
-    )
-  } else {
-    return (
-      <div className="Item">
-        <input
-          type="checkbox"
-          defaultChecked={props.item.checked}
-          onChange={handleChecked} />
-        <input
-          type="text"
-          value={itemDescription} 
-          autoFocus
-          onBlur={handleEditFinished}
-          onChange={e => setItemDescription(e.target.value)} />
-        <button aria-label={'Delete ' + props.item.description} onClick={handleDeleteClicked}>[X]</button>
-      </div>
-    )
-  }
+        {descriptionContent}
+      </Flex>
+      {editButtons}
+    </Flex>
+  )
 }

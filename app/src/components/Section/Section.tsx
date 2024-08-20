@@ -66,7 +66,7 @@ export function Section(props: ISectionProps) {
       <div>
         <Flex align="center">
           <h3>{sectionName}</h3>
-          <ActionIcon onClick={handleAddItemClick} className={classes.addButton}>
+          <ActionIcon variant="subtle" onClick={handleAddItemClick} className={classes.addButton}>
             <IconPlus />
           </ActionIcon>
         </Flex>
@@ -82,8 +82,7 @@ export function Section(props: ISectionProps) {
           placeholder="New Section"
           autoFocus
           onChange={e => setSectionName(e.target.value)}
-          onBlur={_ => handleEditFinished()}
-          type="text" />
+          onBlur={_ => handleEditFinished()} />
       </div>
     );
   }
