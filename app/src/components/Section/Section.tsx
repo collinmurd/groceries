@@ -1,11 +1,12 @@
 import { IItem } from "@groceries/shared";
-import React, { useEffect, useState } from "react";
+import React, { useState } from "react";
 import { Item } from "../Item/Item";
 import { ActionIcon, Flex, TextInput } from '@mantine/core';
 import { createItem, deleteItem } from "../../services/api";
 import { IconPlus } from "@tabler/icons-react";
 
 import classes from './Section.module.css';
+import { useExitOnEscape } from "../../hooks";
 
 interface ISectionItem extends IItem {
   edit: boolean
@@ -22,17 +23,7 @@ export function Section(props: ISectionProps) {
   const [editing, setEditing] = useState(props.edit);
   const [sectionName, setSectionName] = useState(props.name);
 
-  useEffect(() => {
-    const handleEscape = (e: any) => {
-      if (editing && (e.key === "Escape" || e.key === "Enter")) {
-        handleEditFinished();
-      };
-    }
-    window.addEventListener('keydown', handleEscape);
-
-    return () => {window.removeEventListener('keydown', handleEscape)}
-  });
-
+  useExitOnEscape(handleEditFinished);
 
   function handleAddItemClick(event: React.MouseEvent<HTMLButtonElement>) {
     createItem({

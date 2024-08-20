@@ -1,26 +1,17 @@
 import { IItem } from "@groceries/shared";
-import React, { useEffect, useState } from "react";
+import React, { useState } from "react";
 import { updateItem } from '../../services/api';
 import { ActionIcon, Checkbox, Flex, TextInput } from "@mantine/core";
-
 import classes from './Item.module.css'
 import { IconPencil, IconTrash } from "@tabler/icons-react";
+import { useExitOnEscape } from "../../hooks";
 
 export function Item(props: {item: IItem, removeItem: Function, edit: boolean}) {
   const [itemDescription, setItemDescription] = useState(props.item.description);
   const [checked, setChecked] = useState(props.item.checked);
   const [editing, setEditing] = useState(props.edit);
 
-  useEffect(() => {
-    const handleEscape = (e: any) => {
-      if (editing && (e.key === "Escape" || e.key === "Enter")) {
-        handleEditFinished();
-      };
-    }
-    window.addEventListener('keydown', handleEscape);
-
-    return () => {window.removeEventListener('keydown', handleEscape)}
-  });
+  useExitOnEscape(handleEditFinished);
 
   function handleChecked(event: React.ChangeEvent<HTMLInputElement>) {
     updateItem({
@@ -41,9 +32,11 @@ export function Item(props: {item: IItem, removeItem: Function, edit: boolean}) 
   }
 
   function handleEditFinished() {
-    props.item.description = itemDescription;
-    setEditing(false);
-    updateItem(props.item);
+    if (editing) {
+      props.item.description = itemDescription;
+      setEditing(false);
+      updateItem(props.item);
+    }
   }
 
   var descriptionContent = <span className={classes.itemDescription}>{itemDescription}</span>;
