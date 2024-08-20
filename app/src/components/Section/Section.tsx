@@ -1,7 +1,11 @@
 import { IItem } from "@groceries/shared";
 import React, { useEffect, useState } from "react";
 import { Item } from "../Item/Item";
+import { ActionIcon, Flex, TextInput } from '@mantine/core';
 import { createItem, deleteItem } from "../../services/api";
+import { IconPlus } from "@tabler/icons-react";
+
+import classes from './Section.module.css';
 
 interface ISectionItem extends IItem {
   edit: boolean
@@ -54,27 +58,28 @@ export function Section(props: ISectionProps) {
   }
 
   const sectionItems = items.map(item => 
-    <li key={item.id}>
-      <Item item={item} removeItem={removeItem} edit={item.edit}/>
-    </li>
+    <Item key={item.id} item={item} removeItem={removeItem} edit={item.edit}/>
   );
 
   if (!editing) {
     return (
       <div>
-        <div className="sectionHeader">
+        <Flex align="center">
           <h3>{sectionName}</h3>
-          <button onClick={handleAddItemClick}>Add Item</button>
-        </div>
-        <ul>
+          <ActionIcon onClick={handleAddItemClick} className={classes.addButton}>
+            <IconPlus />
+          </ActionIcon>
+        </Flex>
+        <div>
           {sectionItems}
-        </ul>
+        </div>
       </div>
     );
   } else {
     return (
       <div>
-        <input
+        <TextInput
+          placeholder="New Section"
           autoFocus
           onChange={e => setSectionName(e.target.value)}
           onBlur={_ => handleEditFinished()}

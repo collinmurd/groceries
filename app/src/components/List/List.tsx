@@ -31,7 +31,7 @@ export function List(props: {setError: Function}) {
   }, []);
 
   function handleNewSectionClicked() {
-    sections.push({
+    sections.unshift({
       name: '',
       items: [],
       edit: true
