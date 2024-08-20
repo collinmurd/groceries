@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import { getItems } from '../../services/api';
 import { ISectionProps, Section } from '../Section/Section';
+import { Button } from '@mantine/core';
 
 export function List(props: {setError: Function}) {
   const [sections, setSections] = useState<ISectionProps[]>([]);
@@ -46,7 +47,7 @@ export function List(props: {setError: Function}) {
 
   return (
     <div>
-      <button onClick={handleNewSectionClicked}>Add Section</button>
+      <Button onClick={handleNewSectionClicked}>Add Section</Button>
       {displayedSections}
     </div>
   )
