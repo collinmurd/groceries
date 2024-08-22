@@ -1,5 +1,5 @@
 import React from 'react';
-import { render, screen, waitFor } from '@testing-library/react';
+import { render, screen, waitFor } from '../../testing-utils';
 import { IItem } from '@groceries/shared';
 import { List } from './List';
 import { getItems } from '../../services/api';
@@ -83,5 +83,27 @@ describe('add Section', () => {
     await user.click(await screen.findByRole('button'));
 
     expect(await screen.findByRole('textbox'));
+  });
+
+  it('should create a new section when the input is unfocused', async () => {
+    (getItems as jest.Mock).mockReturnValue(Promise.resolve([]));
+    render(<List setError={jest.fn()}/>);
+    const user = userEvent.setup();
+
+    await user.click(screen.getByRole('button'));
+    await user.type(screen.getByRole('textbox'), 'New Section');
+    expect(screen.getByRole('textbox')).toHaveValue('New Section')
+
+    await user.keyboard('{Escape}');
+    expect(await screen.findByText('New Section', {selector: 'h3'})).toBeInTheDocument();
+  });
+
+  it('should not create a new section when the input is unfocused with no content', async () => {
+    (getItems as jest.Mock).mockReturnValue(Promise.resolve([]));
+    render(<List setError={jest.fn()}/>);
+    const user = userEvent.setup();
+
+    await user.keyboard('{Escape}');
+    expect(screen.queryByText('New Section', {selector: 'h3'})).toBeNull();
   });
 });

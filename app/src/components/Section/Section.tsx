@@ -1,12 +1,10 @@
 import { IItem } from "@groceries/shared";
 import React, { useState } from "react";
 import { Item } from "../Item/Item";
-import { ActionIcon, Flex, TextInput } from '@mantine/core';
+import { ActionIcon, Flex } from '@mantine/core';
 import { createItem, deleteItem } from "../../services/api";
 import { IconPlus } from "@tabler/icons-react";
-
 import classes from './Section.module.css';
-import { useExitOnEscape } from "../../hooks";
 
 interface ISectionItem extends IItem {
   edit: boolean
@@ -14,16 +12,12 @@ interface ISectionItem extends IItem {
 
 export interface ISectionProps {
   name: string,
-  items: IItem[],
-  edit: boolean
+  items: IItem[]
 }
 
 export function Section(props: ISectionProps) {
   const [items, setItems] = useState<ISectionItem[]>(props.items.map(i => ({edit: false, ...i})));
-  const [editing, setEditing] = useState(props.edit);
   const [sectionName, setSectionName] = useState(props.name);
-
-  useExitOnEscape(handleEditFinished);
 
   function handleAddItemClick(event: React.MouseEvent<HTMLButtonElement>) {
     createItem({
@@ -37,10 +31,6 @@ export function Section(props: ISectionProps) {
     });
   }
 
-  function handleEditFinished() {
-    setEditing(false);
-  }
-
   function removeItem(item: IItem) {
     deleteItem(item)
       .then(_ => {
@@ -52,29 +42,17 @@ export function Section(props: ISectionProps) {
     <Item key={item.id} item={item} removeItem={removeItem} edit={item.edit}/>
   );
 
-  if (!editing) {
-    return (
+  return (
+    <div>
+      <Flex align="center">
+        <h3>{sectionName}</h3>
+        <ActionIcon variant="subtle" onClick={handleAddItemClick} className={classes.addButton}>
+          <IconPlus />
+        </ActionIcon>
+      </Flex>
       <div>
-        <Flex align="center">
-          <h3>{sectionName}</h3>
-          <ActionIcon variant="subtle" onClick={handleAddItemClick} className={classes.addButton}>
-            <IconPlus />
-          </ActionIcon>
-        </Flex>
-        <div>
-          {sectionItems}
-        </div>
+        {sectionItems}
       </div>
-    );
-  } else {
-    return (
-      <div>
-        <TextInput
-          placeholder="New Section"
-          autoFocus
-          onChange={e => setSectionName(e.target.value)}
-          onBlur={_ => handleEditFinished()} />
-      </div>
-    );
-  }
+    </div>
+  );
 }

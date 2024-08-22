@@ -1,6 +1,5 @@
 import React from 'react';
-import userEvent, { UserEvent } from "@testing-library/user-event";
-import { render, screen } from '@testing-library/react';
+import { render, screen, userEvent, UserEvent } from '../../testing-utils';
 import { updateItem } from "../../services/api";
 import { Item } from "./Item";
 import { IItem } from '@groceries/shared';

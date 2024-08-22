@@ -23,7 +23,7 @@ export function Item(props: {item: IItem, removeItem: Function, edit: boolean}) 
     setChecked(!checked)
   }
 
-  function handleDeleteClicked(event: React.MouseEvent<HTMLButtonElement>) {
+  function handleDelete() {
     props.removeItem(props.item);
   }
 
@@ -32,7 +32,10 @@ export function Item(props: {item: IItem, removeItem: Function, edit: boolean}) 
   }
 
   function handleEditFinished() {
-    if (editing) {
+    if (!itemDescription) {
+      // empty input, delete the item
+      handleDelete();
+    } else {
       props.item.description = itemDescription;
       setEditing(false);
       updateItem(props.item);
@@ -45,7 +48,7 @@ export function Item(props: {item: IItem, removeItem: Function, edit: boolean}) 
       <ActionIcon variant="subtle" aria-label={'Edit ' + itemDescription} onClick={handleEditClicked}>
         <IconPencil />
       </ActionIcon>
-      <ActionIcon variant="subtle" aria-label={'Delete ' + itemDescription} onClick={handleDeleteClicked}>
+      <ActionIcon variant="subtle" aria-label={'Delete ' + itemDescription} onClick={handleDelete}>
         <IconTrash />
       </ActionIcon>
     </div>
@@ -63,7 +66,7 @@ export function Item(props: {item: IItem, removeItem: Function, edit: boolean}) 
 
     editButtons = (
       <div>
-        <ActionIcon variant="subtle" aria-label={'Delete ' + itemDescription} onClick={handleDeleteClicked}>
+        <ActionIcon variant="subtle" aria-label={'Delete ' + itemDescription} onClick={handleDelete}>
           <IconTrash />
         </ActionIcon>
       </div>

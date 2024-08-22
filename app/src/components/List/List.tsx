@@ -1,10 +1,12 @@
 import React, { useEffect, useState } from 'react';
 import { getItems } from '../../services/api';
 import { ISectionProps, Section } from '../Section/Section';
-import { Button } from '@mantine/core';
+import { Button, TextInput } from '@mantine/core';
+import { useExitOnEscape } from '../../hooks';
 
 export function List(props: {setError: Function}) {
   const [sections, setSections] = useState<ISectionProps[]>([]);
+  const [addingSection, setAddingSection] = useState(false);
 
   useEffect(() => {
     getItems()
@@ -18,7 +20,6 @@ export function List(props: {setError: Function}) {
             initialSections[item.section] = {
               name: item.section,
               items: [item],
-              edit: false
             };
           }
         });
@@ -31,27 +32,43 @@ export function List(props: {setError: Function}) {
       })
   }, []);
 
-  function handleNewSectionClicked() {
+  function addNewSection(name: string) {
     sections.unshift({
-      name: '',
-      items: [],
-      edit: true
+      name: name,
+      items: []
     });
     setSections([...sections]);
   }
 
+  function handleNewSectionClicked() {
+    if (!addingSection) {
+      setAddingSection(true);
+    }
+  }
+
   // create section components
   const displayedSections = sections.map(section =>
-    <Section key={section.name} name={section.name} items={section.items} edit={section.edit}/>
+    <Section
+      key={section.name}
+      name={section.name}
+      items={section.items} />
   );
 
   return (
     <div>
       <Button onClick={handleNewSectionClicked}>Add Section</Button>
+      {addingSection && <NewSectionInput addNewSection={addNewSection}/>}
       {displayedSections}
     </div>
-  )
+  );
 }
 
+function NewSectionInput(props: {addNewSection: (name: string) => void}) {
+  const [sectionName, setSectionName] = useState("");
 
+  useExitOnEscape(() => props.addNewSection(sectionName))
 
+  return (
+    <TextInput value={sectionName} onChange={e => setSectionName(e.target.value)} />
+  )
+}
