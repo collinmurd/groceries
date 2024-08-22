@@ -2,4 +2,5 @@ import userEvent, { UserEvent } from '@testing-library/user-event';
 
 export * from '@testing-library/react';
 export { render } from './render';
-export { userEvent, UserEvent };
+export { userEvent };
+export type { UserEvent };
