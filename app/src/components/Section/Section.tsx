@@ -44,7 +44,7 @@ export function Section(props: ISectionProps) {
   return (
     <div>
       <Flex align="center">
-        <h3>{sectionName}</h3>
+        <h3>{props.name}</h3>
         <ActionIcon variant="subtle" onClick={handleAddItemClick} className={classes.addButton}>
           <IconPlus />
         </ActionIcon>
