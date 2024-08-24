@@ -17,13 +17,12 @@ export interface ISectionProps {
 
 export function Section(props: ISectionProps) {
   const [items, setItems] = useState<ISectionItem[]>(props.items.map(i => ({edit: false, ...i})));
-  const [sectionName, setSectionName] = useState(props.name);
 
   function handleAddItemClick(event: React.MouseEvent<HTMLButtonElement>) {
     createItem({
       id: null,
       description: '',
-      section: sectionName,
+      section: props.name,
       checked: false
     }).then(item => {
       items.push({edit: true, ...item});
