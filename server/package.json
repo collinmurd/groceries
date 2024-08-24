@@ -12,7 +12,8 @@
   "author": "",
   "license": "ISC",
   "devDependencies": {
-    "nodemon": "^3.1.4"
+    "nodemon": "^3.1.4",
+    "@types/express": "4.17.21"
   },
   "dependencies": {
     "@groceries/shared": "^1.0.0",

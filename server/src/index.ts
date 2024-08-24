@@ -1,12 +1,9 @@
 import express, { Request, Response , Application } from 'express';
-import dotenv from 'dotenv';
 import mongoose from 'mongoose';
 
 import { IItemDao, Item } from './models'
 import { IItem } from '@groceries/shared';
 import { pinoHttp } from 'pino-http';
-
-dotenv.config();
 
 const INTERNAL_SERVER_ERROR = "Internal Server Error";
 
