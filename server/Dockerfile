@@ -30,4 +30,6 @@ RUN npm ci --omit=dev
 
 COPY --from=build /base/server/dist ./dist
 
+EXPOSE 80
+
 CMD ["node", "/opt/server/dist/index.js"]
