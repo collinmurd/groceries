@@ -3,7 +3,7 @@ FROM node:22-alpine as build
 
 WORKDIR /base
 
-COPY package.json package-lock.json tsconfig.json .
+COPY package.json package-lock.json tsconfig.json ./
 COPY shared/package.json shared/tsconfig.json shared/
 COPY server/package.json server/tsconfig.json server/
 
@@ -24,7 +24,7 @@ FROM node:22-alpine as production
 WORKDIR /opt/server
 COPY --from=build /base/shared ./node_modules/@groceries/shared
 
-COPY server/package.json package-lock.json .
+COPY server/package.json package-lock.json ./
 
 RUN npm ci --omit=dev
 
