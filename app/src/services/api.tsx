@@ -1,6 +1,6 @@
 import { IItem } from "@groceries/shared";
 
-const GROCERIES_API_URL = "http://localhost:8000"
+const GROCERIES_API_URL = process.env.SERVER_URL || 'http://localhost:8000';
 
 export class GroceriesApiError extends Error {
   constructor(msg: string) {

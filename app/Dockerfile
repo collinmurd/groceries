@@ -21,7 +21,7 @@ RUN npm run build --workspace=app
 
 FROM nginx as production
 
-COPY --from=build /base/app/build /usr/shared/nginx/html
+COPY --from=build /base/app/build /usr/share/nginx/html
 
 EXPOSE 80
 

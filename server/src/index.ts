@@ -6,12 +6,14 @@ import { IItem } from '@groceries/shared';
 import { pinoHttp } from 'pino-http';
 import { pino } from 'pino';
 
-const INTERNAL_SERVER_ERROR = "Internal Server Error";
+const MONGO_HOST = process.env.MONGO_HOST || '127.0.0.1';
+const ENV = process.env.ENV || 'dev';
 
 const app: Application = express();
 const port = process.env.PORT || 8000;
-
 const logger = pino();
+
+const INTERNAL_SERVER_ERROR = 'Internal Server Error';
 
 app.use(express.json());
 app.use(pinoHttp({
@@ -27,11 +29,19 @@ app.use(pinoHttp({
   }
 }));
 
-app.use(function (req, res, next) {
-    res.header("Access-Control-Allow-Origin", "http://localhost:3000");
-    res.header("Access-Control-Allow-Headers", "Origin, X-Requested-With, Content-Type, Accept, authorization");
-    res.header("Access-Control-Allow-Methods", "GET, POST, OPTIONS, PUT, DELETE");
-    next();
+// CORS
+app.use((req, res, next) => {
+  if (ENV === 'dev') {
+    // allow any origin for dev
+    res.header('Access-Control-Allow-Origin', req.headers.origin)
+  } else if (ENV === 'prod') {
+    // TODO: determine origin from runtime environment
+    res.header('Access-Control-Allow-Origin', 'TBD');
+  }
+
+  res.header('Access-Control-Allow-Headers', 'Origin, X-Requested-With, Content-Type, Accept, authorization');
+  res.header('Access-Control-Allow-Methods', 'GET, POST, OPTIONS, PUT, DELETE');
+  next();
 });
 
 app.get('/', (req: Request, res: Response) => {
@@ -63,7 +73,7 @@ app.put('/items/:itemId', (req: Request<any, any, IItemDao>, res: Response) => {
       if (data) {
         res.send(data.dto())
       } else {
-        res.status(404).send("Not Found")
+        res.status(404).send('Not Found')
       }
     })
     .catch(err => {
@@ -85,8 +95,8 @@ app.delete('/items/:itemId', (req: Request<any, any, IItemDao>, res: Response) =
 
 async function main() {
   logger.info('Connecting to mongoDB');
-  await mongoose.connect('mongodb://127.0.0.1:27017/groceries');
-  mongoose.Schema.Types.String.checkRequired(v => v != null); // "required" in mongoose by default will reject empty strings, https://github.com/Automattic/mongoose/issues/7150
+  await mongoose.connect(`mongodb://${MONGO_HOST}:27017/groceries`);
+  mongoose.Schema.Types.String.checkRequired(v => v != null); // 'required' in mongoose by default will reject empty strings, https://github.com/Automattic/mongoose/issues/7150
 
   app.listen(port, () => {
     logger.info('Server is ready');

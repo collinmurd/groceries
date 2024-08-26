@@ -12,11 +12,12 @@
   "author": "",
   "license": "ISC",
   "devDependencies": {
-    "nodemon": "^3.1.4",
-    "@types/express": "4.17.21"
+    "@types/express": "4.17.21",
+    "nodemon": "^3.1.4"
   },
   "dependencies": {
     "@groceries/shared": "^1.0.0",
+    "dotenv": "*",
     "express": "^4.19.2",
     "mongoose": "^8.5.1",
     "pino-http": "^10.2.0"
