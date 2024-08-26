@@ -33,12 +33,14 @@ export function List(props: {setError: Function}) {
   }, []);
 
   function addNewSection(name: string) {
-    sections.unshift({
-      name: name,
-      items: []
-    });
-    setSections([...sections]);
     setAddingSection(false);
+    if (!sections.some(s => s.name === name)) {
+      sections.unshift({
+        name: name,
+        items: []
+      });
+      setSections([...sections]);
+    }
   }
 
   function handleNewSectionClicked() {
