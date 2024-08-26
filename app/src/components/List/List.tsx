@@ -38,6 +38,7 @@ export function List(props: {setError: Function}) {
       items: []
     });
     setSections([...sections]);
+    setAddingSection(false);
   }
 
   function handleNewSectionClicked() {
@@ -69,6 +70,10 @@ function NewSectionInput(props: {addNewSection: (name: string) => void}) {
   useExitOnEscape(() => props.addNewSection(sectionName))
 
   return (
-    <TextInput value={sectionName} onChange={e => setSectionName(e.target.value)} />
+    <TextInput
+      autoFocus
+      value={sectionName}
+      onBlur={() => props.addNewSection(sectionName)}
+      onChange={e => setSectionName(e.target.value)} />
   )
 }
