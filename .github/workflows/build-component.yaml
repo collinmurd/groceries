@@ -2,6 +2,10 @@ name: Build Component
 
 on:
   workflow_dispatch:
+    inputs:
+      component:
+        required: true
+        type: string
   workflow_call:
     inputs:
       component:
