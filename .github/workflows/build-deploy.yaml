@@ -5,15 +5,7 @@ on:
 
 jobs:
   build_app:
-    runs-on: ubuntu-latest
-    steps:
-    - uses: actions/checkout@v4
-    - name: Build App
-      uses: ./.github/workflows/build-app
+    uses: ./.github/workflows/build-app.yaml
 
   build_server:
-    runs-on: ubuntu-latest
-    steps:
-    - uses: actions/checkout@v4
-    - name: Build Server
-      uses: ./.github/workflows/build-server
+    uses: ./.github/workflows/build-server.yaml
