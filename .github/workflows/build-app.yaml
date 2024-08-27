@@ -1,0 +1,34 @@
+name: Build App
+
+on:
+  workflow_dispatch:
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    steps:
+    - uses: actions/checkout@v4
+    - name: Run Unit tests
+      run: |
+        npm run test --workspace=app
+
+  build:
+    runs-on: ubuntu-latest
+    needs: [test]
+    steps:
+    - uses: actions/checkout@v4
+    - name: Generate calver tag
+      id: calver
+      run: |
+        echo "tag=$(date +%Y-%m)-${{ github.job }}" >> $GITHUB_OUTPUT
+    - name: Login to GitHub Container Registry
+      uses: docker/login-action@v3
+      with:
+        registry: ghcr.io
+        username: ${{ github.actor }}
+        password: ${{ secrets.GITHUB_TOKEN }}
+    - name: Docker build and push
+      uses: docker/build-push-action@v6
+      with:
+        file: app/Dockerfile
+        tags: ghcr.io/collinmurd/groceries-app:${{ steps.calver.outputs.tag }}

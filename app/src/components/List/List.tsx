@@ -69,7 +69,7 @@ export function List(props: {setError: Function}) {
 function NewSectionInput(props: {addNewSection: (name: string) => void}) {
   const [sectionName, setSectionName] = useState("");
 
-  useExitOnEscape(() => props.addNewSection(sectionName))
+  useExitOnEscape(() => props.addNewSection(sectionName));
 
   return (
     <TextInput
@@ -77,5 +77,5 @@ function NewSectionInput(props: {addNewSection: (name: string) => void}) {
       value={sectionName}
       onBlur={() => props.addNewSection(sectionName)}
       onChange={e => setSectionName(e.target.value)} />
-  )
+  );
 }
