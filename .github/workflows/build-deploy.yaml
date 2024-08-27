@@ -9,11 +9,11 @@ jobs:
     steps:
     - uses: actions/checkout@v4
     - name: Build App
-      uses: ./.github/workflows/build-app.yaml
+      uses: ./.github/workflows/build-app
 
   build_server:
     runs-on: ubuntu-latest
     steps:
     - uses: actions/checkout@v4
     - name: Build Server
-      uses: ./.github/workflows/build-server.yaml
+      uses: ./.github/workflows/build-server
