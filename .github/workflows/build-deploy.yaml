@@ -3,6 +3,9 @@ name: Build All and Deploy
 on:
   workflow_dispatch:
 
+permissions:
+  packages: write
+
 jobs:
   build_app:
     uses: ./.github/workflows/build-component.yaml
