@@ -5,7 +5,11 @@ on:
 
 jobs:
   build_app:
-    uses: ./.github/workflows/build-app.yaml
+    uses: ./.github/workflows/build-component.yaml
+    with:
+      component: app
 
   build_server:
-    uses: ./.github/workflows/build-server.yaml
+    uses: ./.github/workflows/build-component.yaml
+    with:
+      component: server
