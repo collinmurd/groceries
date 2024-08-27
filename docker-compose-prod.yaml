@@ -1,0 +1,19 @@
+services:
+  server:
+    image: ghcr.io/collinmurd/groceries-server:latest
+    ports:
+      - "8000:8000"
+    environment:
+      MONGO_HOST: mongodb
+
+  app:
+    image: ghcr.io/collinmurd/groceries-app:latest
+    ports:
+      - "80:80"
+    environment:
+      API_HOST: http://149.130.214.183/api # TOD: just gonna hardcode this for now...
+
+  mongodb:
+    image: mongo:7
+    ports:
+      - "27017:27017"

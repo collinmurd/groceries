@@ -36,7 +36,8 @@ app.use((req, res, next) => {
     res.header('Access-Control-Allow-Origin', req.headers.origin)
   } else if (ENV === 'prod') {
     // TODO: determine origin from runtime environment
-    res.header('Access-Control-Allow-Origin', 'TBD');
+    // just gonna hardcode this for now... gonna need to fix http too...
+    res.header('Access-Control-Allow-Origin', 'http://149.130.214.183');
   }
 
   res.header('Access-Control-Allow-Headers', 'Origin, X-Requested-With, Content-Type, Accept, authorization');
