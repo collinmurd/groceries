@@ -47,8 +47,20 @@ jobs:
         registry: ghcr.io
         username: ${{ github.actor }}
         password: ${{ secrets.GITHUB_TOKEN }}
+    - name: Docker metadata
+      id: image_metadata
+      uses: docker/metadata-action@v5
+      with:
+        images: |
+          ghcr.io/collinmurd/groceries-${{ inputs.component }}
+        tags: |
+          type=raw,value=${{ steps.calver.outputs.tag }}
+          type=raw,value=latest,enable={{is_default_branch}}
+          type=sha
     - name: Docker build and push
       uses: docker/build-push-action@v6
       with:
         file: ${{ inputs.component }}/Dockerfile
-        tags: ghcr.io/collinmurd/groceries-${{ inputs.component }}:${{ steps.calver.outputs.tag }}
+        tags: ${{ steps.image_metadata.outputs.tags }}
+        labels: ${{ steps.image_metadata.outputs.labels }}
+        push: true
