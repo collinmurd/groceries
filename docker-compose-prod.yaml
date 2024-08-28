@@ -45,7 +45,7 @@ services:
     ports:
       - "3000:3000"
     environment:
-      SERVER_URL: http://149.130.209.48/api # TOD: just gonna hardcode this for now...
+      REACT_APP_SERVER_URL: http://149.130.209.48/api # TOD: just gonna hardcode this for now...
 
   mongodb:
     image: mongo:7
