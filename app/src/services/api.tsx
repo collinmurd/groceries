@@ -1,6 +1,9 @@
 import { IItem } from "@groceries/shared";
 
-const GROCERIES_API_URL = process.env.REACT_APP_SERVER_URL || 'http://localhost:8000';
+var GROCERIES_API_URL = `${window.location.origin}/api`;
+if (process.env.NODE_ENV === 'development') {
+  GROCERIES_API_URL = 'http://localhost:8000';
+}
 
 export class GroceriesApiError extends Error {
   constructor(msg: string) {

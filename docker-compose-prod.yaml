@@ -44,8 +44,6 @@ services:
         - groceries-app
     ports:
       - "3000:3000"
-    environment:
-      REACT_APP_SERVER_URL: http://149.130.209.48/api # TOD: just gonna hardcode this for now...
 
   mongodb:
     image: mongo:7
