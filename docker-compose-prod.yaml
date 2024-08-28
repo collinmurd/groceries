@@ -1,13 +1,47 @@
+#####################################################3
+# This should be prod
+# but temporarily...
+# I have to use the below config on the instance
+#####################################################3
+# services:
+#   server:
+#     image: ghcr.io/collinmurd/groceries-server:latest
+#     ports:
+#       - "8000:8000"
+#     environment:
+#       MONGO_HOST: mongodb
+
+#   app:
+#     image: ghcr.io/collinmurd/groceries-app:latest
+#     ports:
+#       - "3000:3000"
+#     environment:
+#       SERVER_URL: http://149.130.214.183/api # TOD: just gonna hardcode this for now...
+
+#   mongodb:
+#     image: mongo:7
+#     ports:
+#       - "27017:27017"
+
+
 services:
   server:
-    image: ghcr.io/collinmurd/groceries-server:latest
+    build:
+      context: .
+      dockerfile: server/Dockerfile
+      tags:
+        - groceries-server
     ports:
       - "8000:8000"
     environment:
       MONGO_HOST: mongodb
 
   app:
-    image: ghcr.io/collinmurd/groceries-app:latest
+    build:
+      context: .
+      dockerfile: app/Dockerfile
+      tags:
+        - groceries-app
     ports:
       - "3000:3000"
     environment:
