@@ -19,7 +19,7 @@ services:
     ports:
       - "3000:3000"
     environment:
-      API_HOST: http://localhost:8000
+      SERVER_URL: http://localhost:8000
 
   mongodb:
     image: mongo:7

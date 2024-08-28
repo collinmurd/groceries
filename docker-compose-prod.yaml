@@ -11,7 +11,7 @@ services:
     ports:
       - "3000:3000"
     environment:
-      API_HOST: http://149.130.214.183/api # TOD: just gonna hardcode this for now...
+      SERVER_URL: http://149.130.214.183/api # TOD: just gonna hardcode this for now...
 
   mongodb:
     image: mongo:7
