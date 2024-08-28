@@ -22,7 +22,8 @@ RUN npm run build --workspace=app
 FROM nginx as production
 
 COPY --from=build /base/app/build /usr/share/nginx/html
+COPY app/nginx.conf /etc/nginx/conf.d/groceries.conf
 
-EXPOSE 80
+EXPOSE 3000
 
 CMD ["nginx", "-g", "daemon off;"]

@@ -9,7 +9,7 @@ services:
   app:
     image: ghcr.io/collinmurd/groceries-app:latest
     ports:
-      - "80:80"
+      - "3000:3000"
     environment:
       API_HOST: http://149.130.214.183/api # TOD: just gonna hardcode this for now...
 
