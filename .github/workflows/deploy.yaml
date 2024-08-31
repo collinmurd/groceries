@@ -12,7 +12,7 @@ jobs:
       env:
         PRIVATE_KEY: ${{ secrets.GROCERIES_PRIVATE_KEY }}
       run: |
-        echo $PRIVATE_KEY > id_rsa_groceries
+        echo "$PRIVATE_KEY" > id_rsa_groceries
         chmod 600 id_rsa_groceries
     - name: Docker Compose up
       env:
