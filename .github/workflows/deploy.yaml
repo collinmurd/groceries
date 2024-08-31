@@ -14,6 +14,7 @@ jobs:
       run: |
         echo $PRIVATE_KEY > id_rsa_groceries
         chmod 600 id_rsa_groceries
+        cat id_rsa_groceries
     - name: Docker Compose up
       env:
         HOST: "149.130.209.48"
