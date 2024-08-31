@@ -18,7 +18,7 @@ jobs:
       env:
         HOST: "149.130.209.48"
       run: |
-        ssh -i id_rsa_groceries groceries@$HOST "
+        ssh -i id_rsa_groceries -o "StrictHostKeyChecking no" groceries@$HOST "
           curl -o docker-compose.yaml https://raw.githubusercontent.com/collinmurd/groceries/main/docker-compose-prod.yaml
           docker compose up -d
         "
