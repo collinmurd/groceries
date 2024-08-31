@@ -10,16 +10,15 @@ jobs:
     steps:
     - name: Configure ssh key
       env:
-        PRIVATE_KEY: ${{ vars.TEMP_KEY }}
+        PRIVATE_KEY: ${{ secrets.GROCERIES_PRIVATE_KEY }}
       run: |
         echo $PRIVATE_KEY > id_rsa_groceries
         chmod 600 id_rsa_groceries
-        cat id_rsa_groceries
     - name: Docker Compose up
       env:
         HOST: "149.130.209.48"
       run: |
-        ssh -i ~/.ssh/id_rsa_groceries -o "StrictHostKeyChecking no" groceries@149.130.209.48 "
+        ssh -i id_rsa_groceries -o "StrictHostKeyChecking no" groceries@$HOST "
           curl -o docker-compose.yaml https://raw.githubusercontent.com/collinmurd/groceries/main/docker-compose-prod.yaml
           docker compose up -d
         "
