@@ -18,5 +18,20 @@ jobs:
       component: server
 
   deploy_all:
+    runs-on: ubuntu-latest
     needs: [build_app, build_server]
-    uses: ./.github/workflows/deploy.yaml
+    steps:
+    - name: Configure ssh key
+      env:
+        PRIVATE_KEY: ${{ secrets.GROCERIES_PRIVATE_KEY }}
+      run: |
+        echo "$PRIVATE_KEY" > id_rsa_groceries
+        chmod 600 id_rsa_groceries
+    - name: Docker Compose up
+      env:
+        HOST: "149.130.209.48"
+      run: |
+        ssh -i id_rsa_groceries -o "StrictHostKeyChecking no" groceries@$HOST "
+          curl -o docker-compose.yaml https://raw.githubusercontent.com/collinmurd/groceries/main/docker-compose-prod.yaml
+          docker compose up -d
+        "
