@@ -68,6 +68,14 @@ app.post('/items', (req: Request<any, any, IItemDao>, res: Response<IItem | stri
     });
 });
 
+app.post('/items:batchDelete', (req: Request<any, any, string[]>, res: Response) => {
+  Item.deleteMany({_id: { $in: req.body }})
+    .then(_ => res.status(204).send())
+    .catch(err => {
+      res.status(500).send(INTERNAL_SERVER_ERROR)
+    });
+});
+
 app.put('/items/:itemId', (req: Request<any, any, IItemDao>, res: Response) => {
   Item.findByIdAndUpdate(req.params.itemId, {...req.body}, {new: true})
     .then(data => {
