@@ -64,21 +64,21 @@ describe('add item', () => {
     user = userEvent.setup();
   });
 
-  it('should call the create API when the button is clicked', async () => {
-    render(<Section name={mockName} items={[]} />)
-    await user.click(await screen.findByRole('button'));
-
-    expect(createItem).toHaveBeenCalled();
-  });
-
   it('should add a new item to the list', async () => {
-    render(<Section name={mockName} items={[]} />)
+    render(<Section name={mockName} items={[]} />);
+    (createItem as jest.Mock).mockReturnValue(Promise.resolve({
+      id: "1",
+      description: "New Item",
+      section: "",
+      checked: true
+    }));
     await user.click(await screen.findByRole('button'));
     
     await user.type(screen.getByRole('textbox'), 'New Item');
     expect(screen.getByRole('textbox')).toHaveValue('New Item')
 
     await user.keyboard('{Escape}');
-    expect(screen.getByText('New Item')).toBeInTheDocument();
+    expect(createItem).toHaveBeenCalled();
+    expect(await screen.findByText('New Item')).toBeInTheDocument();
   });
 });
