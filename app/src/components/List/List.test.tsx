@@ -1,9 +1,8 @@
 import React from 'react';
-import { render, screen, waitFor } from '../../testing-utils';
+import { render, screen, waitFor, userEvent, UserEvent} from '../../testing-utils';
 import { IItem } from '@groceries/shared';
 import { List } from './List';
 import { getItems } from '../../services/api';
-import userEvent from '@testing-library/user-event';
 
 jest.mock('../../services/api')
 
@@ -72,7 +71,7 @@ describe('add Section', () => {
     (getItems as jest.Mock).mockReturnValue(Promise.resolve([]));
     render(<List setError={jest.fn()}/>);
 
-    expect(await screen.findByText('Add Section')).toBeInTheDocument();
+    expect(await screen.findByRole('button', {name: 'Add Section'})).toBeInTheDocument();
   });
 
   it('should display an input for a new section when clicked', async () => {
@@ -80,7 +79,7 @@ describe('add Section', () => {
     render(<List setError={jest.fn()}/>);
     const user = userEvent.setup();
 
-    await user.click(await screen.findByRole('button'));
+    await user.click(await screen.findByRole('button', {name: 'Add Section'}));
 
     expect(await screen.findByRole('textbox'));
   });
@@ -90,7 +89,7 @@ describe('add Section', () => {
     render(<List setError={jest.fn()}/>);
     const user = userEvent.setup();
 
-    await user.click(screen.getByRole('button'));
+    await user.click(await screen.findByRole('button', {name: 'Add Section'}));
     await user.type(screen.getByRole('textbox'), 'New Section');
     expect(screen.getByRole('textbox')).toHaveValue('New Section')
 
@@ -102,8 +101,47 @@ describe('add Section', () => {
     (getItems as jest.Mock).mockReturnValue(Promise.resolve([]));
     render(<List setError={jest.fn()}/>);
     const user = userEvent.setup();
+    await user.click(await screen.findByRole('button', {name: 'Add Section'}));
 
     await user.keyboard('{Escape}');
     expect(screen.queryByText('New Section', {selector: 'h3'})).toBeNull();
+  });
+});
+
+describe('Clearing items', () => {
+  var user: UserEvent;
+  beforeEach(() => {
+    (getItems as jest.Mock).mockReturnValue(Promise.resolve(mockData));
+    user = userEvent.setup();
+  });
+
+  it('should display a Clear button', async () => {
+    render(<List setError={jest.fn()}/>)
+    expect(await screen.findByRole('button', {name: 'Clear'})).toBeInTheDocument();
+  });
+
+  it('should display Clear options when dropdown is clicked', async () => {
+    render(<List setError={jest.fn()}/>)
+    await user.click(await screen.findByRole('button', {name: 'Clear'}));
+    expect(await screen.findByRole('menuitem', {name: 'Clear All'})).toBeInTheDocument();
+    expect(await screen.findByRole('menuitem', {name: 'Clear Checked'})).toBeInTheDocument();
+  });
+
+  it('should clear all items when Clear All is clicked', async () => {
+    render(<List setError={jest.fn()}/>)
+    await user.click(await screen.findByRole('button', {name: 'Clear'}));
+    await user.click(await screen.findByRole('menuitem', {name: 'Clear All'}));
+    expect(screen.queryByText('Chicken')).toBeNull();
+    expect(screen.queryByText('Steak')).toBeNull();
+    expect(screen.queryByText('Apples')).toBeNull();
+  });
+
+  it('should clear checked items when Clear Checked is clicked', async () => {
+    render(<List setError={jest.fn()}/>)
+    await user.click(await screen.findByRole('button', {name: 'Clear'}));
+    await user.click(await screen.findByRole('menuitem', {name: 'Clear Checked'}));
+    expect(screen.queryByText('Chicken')).toBeInTheDocument();
+    expect(screen.queryByText('Steak')).toBeNull();
+    expect(screen.queryByText('Apples')).toBeInTheDocument();
   });
 });

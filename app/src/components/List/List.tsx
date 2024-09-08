@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import { getItems } from '../../services/api';
 import { ISectionProps, Section } from '../Section/Section';
-import { Button, Loader, TextInput } from '@mantine/core';
+import { Button, Loader, Menu, TextInput } from '@mantine/core';
 import { useExitOnEscape } from '../../hooks';
 
 import classes from './List.module.css';
@@ -53,6 +53,17 @@ export function List(props: {setError: Function}) {
     }
   }
 
+  function clearAllItems() {
+    sections.forEach(s => s.items = []);
+    console.log(sections)
+    setSections([...sections]);
+  }
+
+  function clearCheckedItems() {
+    sections.forEach(s => s.items = s.items.filter(i => !i.checked));
+    setSections([...sections]);
+  }
+
   // create section components
   const displayedSections = sections.map(section =>
     <Section
@@ -61,15 +72,24 @@ export function List(props: {setError: Function}) {
       items={section.items} />
   );
 
-  return (
-    <div>
-      {loading ? 
+  if (loading) {
+    return (
+      <div>
         <Loader type='dots' className={classes.loader} />
-        : <Button onClick={handleNewSectionClicked}>Add Section</Button>}
-      {addingSection && <NewSectionInput addNewSection={addNewSection}/>}
-      {displayedSections}
-    </div>
-  );
+      </div>
+    );
+  } else {
+    return (
+      <div>
+        <div className={classes.headerButtons}>
+          <Button onClick={handleNewSectionClicked}>Add Section</Button>
+          <ClearItems clearAllItems={clearAllItems} clearCheckedItems={clearCheckedItems} />
+        </div>
+        {addingSection && <NewSectionInput addNewSection={addNewSection}/>}
+        {displayedSections}
+      </div>
+    );
+  }
 }
 
 function NewSectionInput(props: {addNewSection: (name: string) => void}) {
@@ -84,4 +104,28 @@ function NewSectionInput(props: {addNewSection: (name: string) => void}) {
       onBlur={() => props.addNewSection(sectionName)}
       onChange={e => setSectionName(e.target.value)} />
   );
+}
+
+interface IClearItemsProps {
+  clearAllItems: () => void,
+  clearCheckedItems: () => void
+}
+
+function ClearItems(props: IClearItemsProps) {
+  return (
+    <Menu shadow='md' width={200}>
+      <Menu.Target>
+        <Button>Clear</Button>
+      </Menu.Target>
+
+      <Menu.Dropdown>
+        <Menu.Item onClick={props.clearAllItems}>
+          Clear All
+        </Menu.Item>
+        <Menu.Item onClick={props.clearCheckedItems}>
+          Clear Checked
+        </Menu.Item>
+      </Menu.Dropdown>
+    </Menu>
+  )
 }

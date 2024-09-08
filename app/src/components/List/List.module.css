@@ -2,3 +2,8 @@
 .loader {
   margin: 10px auto;
 }
+
+.headerButtons {
+  display: flex;
+  justify-content: space-between;
+}
