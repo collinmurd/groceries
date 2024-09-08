@@ -1,12 +1,15 @@
 import React, { useEffect, useState } from 'react';
 import { getItems } from '../../services/api';
 import { ISectionProps, Section } from '../Section/Section';
-import { Button, TextInput } from '@mantine/core';
+import { Button, Loader, TextInput } from '@mantine/core';
 import { useExitOnEscape } from '../../hooks';
+
+import classes from './List.module.css';
 
 export function List(props: {setError: Function}) {
   const [sections, setSections] = useState<ISectionProps[]>([]);
   const [addingSection, setAddingSection] = useState(false);
+  const [loading, setLoading] = useState(true);
 
   useEffect(() => {
     getItems()
@@ -25,6 +28,7 @@ export function List(props: {setError: Function}) {
         });
 
         setSections(Object.values(initialSections));
+        setLoading(false);
       })
       .catch(err => {
         console.log(err);
@@ -59,7 +63,9 @@ export function List(props: {setError: Function}) {
 
   return (
     <div>
-      <Button onClick={handleNewSectionClicked}>Add Section</Button>
+      {loading ? 
+        <Loader type='dots' className={classes.loader} />
+        : <Button onClick={handleNewSectionClicked}>Add Section</Button>}
       {addingSection && <NewSectionInput addNewSection={addNewSection}/>}
       {displayedSections}
     </div>
