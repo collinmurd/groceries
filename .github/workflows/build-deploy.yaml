@@ -33,5 +33,6 @@ jobs:
       run: |
         ssh -i id_rsa_groceries -o "StrictHostKeyChecking no" groceries@$HOST "
           curl -o docker-compose.yaml https://raw.githubusercontent.com/collinmurd/groceries/main/docker-compose-prod.yaml
+          docker compose pull
           docker compose up -d
         "
