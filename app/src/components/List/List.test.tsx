@@ -2,7 +2,7 @@ import React from 'react';
 import { render, screen, waitFor, userEvent, UserEvent} from '../../testing-utils';
 import { IItem } from '@groceries/shared';
 import { List } from './List';
-import { getItems } from '../../services/api';
+import { deleteItem, getItems } from '../../services/api';
 
 jest.mock('../../services/api')
 
@@ -105,6 +105,30 @@ describe('add Section', () => {
 
     await user.keyboard('{Escape}');
     expect(screen.queryByText('New Section', {selector: 'h3'})).toBeNull();
+  });
+});
+
+describe('remove item', () => {
+  var user: UserEvent;
+  beforeEach(() => {
+    (deleteItem as jest.Mock).mockReturnValue(Promise.resolve(""));
+    user = userEvent.setup();
+  });
+
+  it('should call the delete API when an item is removed', async () => {
+    (getItems as jest.Mock).mockReturnValue(Promise.resolve(mockData));
+    render(<List setError={jest.fn()}/>);
+    await user.click(await screen.findByLabelText('Delete Steak'));
+
+    expect(deleteItem).toHaveBeenCalled();
+  });
+
+  it('should remove the item from the list', async() => {
+    (getItems as jest.Mock).mockReturnValue(Promise.resolve(mockData));
+    render(<List setError={jest.fn()}/>);
+    await user.click(await screen.findByLabelText('Delete Apples'));
+
+    expect(screen.queryByText('Apples')).toBeNull();
   });
 });
 

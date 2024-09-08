@@ -32,31 +32,6 @@ describe('Render', () => {
   });
 });
 
-describe('remove item', () => {
-  var user: UserEvent;
-  beforeEach(() => {
-    (deleteItem as jest.Mock).mockReturnValue(Promise.resolve(""));
-    user = userEvent.setup();
-  });
-
-  it('should call the delete API when an item is removed', async () => {
-    render(<Section name={mockName} addNewItem={jest.fn()}>
-        {mockData.map(i => <Item key={i.id} item={i} removeItem={jest.fn()} edit={false} />)}
-    </Section>)
-    await user.click(await screen.findByLabelText('Delete Steak'));
-
-    expect(deleteItem).toHaveBeenCalled();
-  });
-
-  it('should remove the item from the list', async() => {
-    render(<Section name={mockName} addNewItem={jest.fn()}>
-        {mockData.map(i => <Item key={i.id} item={i} removeItem={jest.fn()} edit={false} />)}
-    </Section>)
-    await user.click(await screen.findByLabelText('Delete Steak'));
-
-    expect(screen.queryByText('Apples')).toBeNull();
-  });
-});
 
 describe('add item', () => {
   var user: UserEvent;
