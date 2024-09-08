@@ -27,11 +27,6 @@ export function Section(props: ISectionProps) {
     props.addNewItem(itemDescription, props.name);
   }
 
-
-  // const sectionItems = items.map(item => 
-  //   <Item key={item.id} item={item} removeItem={removeItem} edit={item.edit}/>
-  // );
-
   return (
     <div>
       <Flex align="center">

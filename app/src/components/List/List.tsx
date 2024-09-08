@@ -139,5 +139,5 @@ function ClearItems(props: IClearItemsProps) {
         </Menu.Item>
       </Menu.Dropdown>
     </Menu>
-  )
+  );
 }

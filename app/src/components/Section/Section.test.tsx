@@ -71,8 +71,9 @@ describe('add item', () => {
     user = userEvent.setup();
   });
 
-  it('should add a new item to the list', async () => {
-    render(<Section name={mockName} addNewItem={jest.fn()}></Section>);
+  it('should create an input and call addNewItem prop', async () => {
+    const addNewItem = jest.fn()
+    render(<Section name={mockName} addNewItem={addNewItem}></Section>);
     (createItem as jest.Mock).mockReturnValue(Promise.resolve({
       id: "1",
       description: "New Item",
@@ -85,7 +86,6 @@ describe('add item', () => {
     expect(screen.getByRole('textbox')).toHaveValue('New Item')
 
     await user.keyboard('{Escape}');
-    expect(createItem).toHaveBeenCalled();
-    expect(await screen.findByText('New Item')).toBeInTheDocument();
+    expect(addNewItem).toHaveBeenCalled();
   });
 });
