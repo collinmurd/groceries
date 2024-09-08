@@ -4,6 +4,7 @@ import { Section } from "./Section";
 import { IItem } from "@groceries/shared";
 import userEvent, { UserEvent } from "@testing-library/user-event";
 import { createItem, deleteItem } from "../../services/api";
+import { Item } from '../Item/Item';
 
 jest.mock('../../services/api')
 
@@ -25,7 +26,9 @@ const mockData: IItem[] = [
 
 describe('Render', () => {
   it('should render', () => {
-    render(<Section name={mockName} items={mockData} />)
+    render(<Section name={mockName} addNewItem={jest.fn()}>
+        {mockData.map(i => <Item key={i.id} item={i} removeItem={jest.fn()} edit={false} />)}
+    </Section>)
   });
 });
 
@@ -37,14 +40,18 @@ describe('remove item', () => {
   });
 
   it('should call the delete API when an item is removed', async () => {
-    render(<Section name={mockName} items={mockData} />)
+    render(<Section name={mockName} addNewItem={jest.fn()}>
+        {mockData.map(i => <Item key={i.id} item={i} removeItem={jest.fn()} edit={false} />)}
+    </Section>)
     await user.click(await screen.findByLabelText('Delete Steak'));
 
     expect(deleteItem).toHaveBeenCalled();
   });
 
   it('should remove the item from the list', async() => {
-    render(<Section name={mockName} items={mockData} />)
+    render(<Section name={mockName} addNewItem={jest.fn()}>
+        {mockData.map(i => <Item key={i.id} item={i} removeItem={jest.fn()} edit={false} />)}
+    </Section>)
     await user.click(await screen.findByLabelText('Delete Steak'));
 
     expect(screen.queryByText('Apples')).toBeNull();
@@ -65,7 +72,7 @@ describe('add item', () => {
   });
 
   it('should add a new item to the list', async () => {
-    render(<Section name={mockName} items={[]} />);
+    render(<Section name={mockName} addNewItem={jest.fn()}></Section>);
     (createItem as jest.Mock).mockReturnValue(Promise.resolve({
       id: "1",
       description: "New Item",

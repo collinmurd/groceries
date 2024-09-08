@@ -1,33 +1,28 @@
 import React, { useEffect, useState } from 'react';
-import { getItems } from '../../services/api';
-import { ISectionProps, Section } from '../Section/Section';
+import { createItem, deleteItem, getItems } from '../../services/api';
+import { Section } from '../Section/Section';
 import { Button, Loader, Menu, TextInput } from '@mantine/core';
 import { useExitOnEscape } from '../../hooks';
+import { IItem } from '@groceries/shared';
 
 import classes from './List.module.css';
+import { Item } from '../Item/Item';
 
 export function List(props: {setError: Function}) {
-  const [sections, setSections] = useState<ISectionProps[]>([]);
+  const [items, setItems] = useState<IItem[]>([]);
+  const [sections, setSections] = useState<string[]>([]);
   const [addingSection, setAddingSection] = useState(false);
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
     getItems()
       .then(data => {
-        // split items into sections
-        const initialSections: {[key: string]: ISectionProps} = {}
-        data.forEach(item => {
-          if (Object.keys(initialSections).includes(item.section)) {
-            initialSections[item.section].items.push(item);
-          } else {
-            initialSections[item.section] = {
-              name: item.section,
-              items: [item],
-            };
-          }
-        });
+        setItems(data);
 
-        setSections(Object.values(initialSections));
+        var tempSections = new Set<string>();
+        data.forEach(i => tempSections.add(i.section));
+        setSections([...tempSections]);
+
         setLoading(false);
       })
       .catch(err => {
@@ -38,11 +33,8 @@ export function List(props: {setError: Function}) {
 
   function addNewSection(name: string) {
     setAddingSection(false);
-    if (!sections.some(s => s.name === name)) {
-      sections.unshift({
-        name: name,
-        items: []
-      });
+    if (!sections.includes(name)) {
+      sections.unshift(name);
       setSections([...sections]);
     }
   }
@@ -53,23 +45,43 @@ export function List(props: {setError: Function}) {
     }
   }
 
+  function addNewItem(itemDescription: string, section: string) {
+    createItem({
+      id: null,
+      description: itemDescription,
+      section: section,
+      checked: false
+    }).then(item => {
+      items.push(item);
+      setItems([...items]);
+    });
+  }
+
+  function removeItem(item: IItem) {
+    deleteItem(item)
+      .then(_ => {
+        setItems(items.filter(i => i.id !== item.id));
+      });
+  }
+
   function clearAllItems() {
-    sections.forEach(s => s.items = []);
-    console.log(sections)
-    setSections([...sections]);
+    setItems([]);
   }
 
   function clearCheckedItems() {
-    sections.forEach(s => s.items = s.items.filter(i => !i.checked));
-    setSections([...sections]);
+    setItems([...items.filter(i => !i.checked)]);
   }
 
   // create section components
   const displayedSections = sections.map(section =>
     <Section
-      key={section.name}
-      name={section.name}
-      items={section.items} />
+      key={section}
+      name={section}
+      addNewItem={addNewItem}>
+        {items
+          .filter(i => i.section === section)
+          .map(i => <Item key={i.id} item={i} removeItem={removeItem} edit={false} />)}
+      </Section>
   );
 
   if (loading) {

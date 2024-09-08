@@ -7,17 +7,13 @@ import { IconPlus } from "@tabler/icons-react";
 import classes from './Section.module.css';
 import { useExitOnEscape } from "../../hooks";
 
-interface ISectionItem extends IItem {
-  edit: boolean
-}
-
 export interface ISectionProps {
   name: string,
-  items: IItem[]
+  addNewItem: (itemDescription: string, section: string) => void,
+  children?: React.ReactNode
 }
 
 export function Section(props: ISectionProps) {
-  const [items, setItems] = useState<ISectionItem[]>(props.items.map(i => ({edit: false, ...i})));
   const [addingItem, setAddingItem] = useState(false);
 
   function handleAddItemClick() {
@@ -28,27 +24,13 @@ export function Section(props: ISectionProps) {
 
   function addNewItem(itemDescription: string) {
     setAddingItem(false);
-    createItem({
-      id: null,
-      description: itemDescription,
-      section: props.name,
-      checked: false
-    }).then(item => {
-      items.push({edit: false, ...item});
-      setItems([...items]);
-    });
+    props.addNewItem(itemDescription, props.name);
   }
 
-  function removeItem(item: IItem) {
-    deleteItem(item)
-      .then(_ => {
-        setItems(items.filter(i => i.id !== item.id));
-      });
-  }
 
-  const sectionItems = items.map(item => 
-    <Item key={item.id} item={item} removeItem={removeItem} edit={item.edit}/>
-  );
+  // const sectionItems = items.map(item => 
+  //   <Item key={item.id} item={item} removeItem={removeItem} edit={item.edit}/>
+  // );
 
   return (
     <div>
@@ -60,7 +42,7 @@ export function Section(props: ISectionProps) {
       </Flex>
       { addingItem && <NewItemInput addNewItem={addNewItem} /> }
       <div>
-        {sectionItems}
+        {props.children}
       </div>
     </div>
   );
