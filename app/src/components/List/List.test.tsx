@@ -2,7 +2,7 @@ import React from 'react';
 import { render, screen, waitFor, userEvent, UserEvent} from '../../testing-utils';
 import { IItem } from '@groceries/shared';
 import { List } from './List';
-import { deleteItem, getItems } from '../../services/api';
+import { batchDeleteItems, deleteItem, getItems } from '../../services/api';
 
 jest.mock('../../services/api')
 
@@ -136,6 +136,7 @@ describe('Clearing items', () => {
   var user: UserEvent;
   beforeEach(() => {
     (getItems as jest.Mock).mockReturnValue(Promise.resolve(mockData));
+    (batchDeleteItems as jest.Mock).mockReturnValue(Promise.resolve(""));
     user = userEvent.setup();
   });
 
@@ -155,6 +156,7 @@ describe('Clearing items', () => {
     render(<List setError={jest.fn()}/>)
     await user.click(await screen.findByRole('button', {name: 'Clear'}));
     await user.click(await screen.findByRole('menuitem', {name: 'Clear All'}));
+    expect(batchDeleteItems).toHaveBeenCalled();
     expect(screen.queryByText('Chicken')).toBeNull();
     expect(screen.queryByText('Steak')).toBeNull();
     expect(screen.queryByText('Apples')).toBeNull();
@@ -164,6 +166,7 @@ describe('Clearing items', () => {
     render(<List setError={jest.fn()}/>)
     await user.click(await screen.findByRole('button', {name: 'Clear'}));
     await user.click(await screen.findByRole('menuitem', {name: 'Clear Checked'}));
+    expect(batchDeleteItems).toHaveBeenCalled();
     expect(screen.queryByText('Chicken')).toBeInTheDocument();
     expect(screen.queryByText('Steak')).toBeNull();
     expect(screen.queryByText('Apples')).toBeInTheDocument();

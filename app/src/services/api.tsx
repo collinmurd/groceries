@@ -53,3 +53,7 @@ export async function updateItem(item: IItem): Promise<IItem> {
 export async function deleteItem(item: IItem) {
   return call('DELETE', `/items/${item.id}`);
 }
+
+export async function batchDeleteItems(ids: string[]) {
+  return call('POST', '/items:batchDelete', ids);
+}

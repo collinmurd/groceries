@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import { createItem, deleteItem, getItems } from '../../services/api';
+import { batchDeleteItems, createItem, deleteItem, getItems } from '../../services/api';
 import { Section } from '../Section/Section';
 import { Button, Loader, Menu, TextInput } from '@mantine/core';
 import { useExitOnEscape } from '../../hooks';
@@ -57,6 +57,15 @@ export function List(props: {setError: Function}) {
     });
   }
 
+  function updateItem(item: IItem) {
+    var itemToUpdate = items.find(i => i.id === item.id);
+    if (itemToUpdate) {
+      itemToUpdate = {...item}
+    }
+
+    setItems([...items]);
+  }
+
   function removeItem(item: IItem) {
     deleteItem(item)
       .then(_ => {
@@ -65,11 +74,21 @@ export function List(props: {setError: Function}) {
   }
 
   function clearAllItems() {
-    setItems([]);
+    batchDeleteItems(items
+        .filter(i => i.id)
+        .map(i => i.id!))
+      .then(() => {
+        setItems([]);
+      });
   }
 
   function clearCheckedItems() {
-    setItems([...items.filter(i => !i.checked)]);
+    batchDeleteItems(items
+        .filter(i => i.checked)
+        .map(i => i.id!))
+      .then(() => {
+        setItems([...items.filter(i => !i.checked)]);
+      });
   }
 
   // create section components
@@ -80,7 +99,7 @@ export function List(props: {setError: Function}) {
       addNewItem={addNewItem}>
         {items
           .filter(i => i.section === section)
-          .map(i => <Item key={i.id} item={i} removeItem={removeItem} edit={false} />)}
+          .map(i => <Item key={i.id} item={i} removeItem={removeItem} updateItemState={updateItem} edit={false} />)}
       </Section>
   );
 

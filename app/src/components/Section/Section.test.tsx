@@ -27,7 +27,7 @@ const mockData: IItem[] = [
 describe('Render', () => {
   it('should render', () => {
     render(<Section name={mockName} addNewItem={jest.fn()}>
-        {mockData.map(i => <Item key={i.id} item={i} removeItem={jest.fn()} edit={false} />)}
+        {mockData.map(i => <Item key={i.id} item={i} removeItem={jest.fn()} updateItemState={jest.fn()} edit={false} />)}
     </Section>)
   });
 });

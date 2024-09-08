@@ -6,21 +6,22 @@ import classes from './Item.module.css'
 import { IconPencil, IconTrash } from "@tabler/icons-react";
 import { useExitOnEscape } from "../../hooks";
 
-export function Item(props: {item: IItem, removeItem: Function, edit: boolean}) {
-  const [itemDescription, setItemDescription] = useState(props.item.description);
-  const [checked, setChecked] = useState(props.item.checked);
+export interface IItemProps {
+  item: IItem,
+  edit: boolean,
+  removeItem: (item: IItem) => void,
+  updateItemState: (item: IItem) => void
+}
+
+export function Item(props: IItemProps) {
   const [editing, setEditing] = useState(props.edit);
 
   useExitOnEscape(handleEditFinished);
 
   function handleChecked(event: React.ChangeEvent<HTMLInputElement>) {
-    updateItem({
-      checked: event.target.checked,
-      description: itemDescription,
-      id: props.item.id,
-      section: props.item.section
-    });
-    setChecked(!checked)
+    props.item.checked = event.target.checked;
+    updateItem(props.item);
+    props.updateItemState(props.item);
   }
 
   function handleDelete() {
@@ -31,24 +32,33 @@ export function Item(props: {item: IItem, removeItem: Function, edit: boolean}) 
     setEditing(true);
   }
 
+  function handleDescriptionChanged(event: React.ChangeEvent<HTMLInputElement>) {
+    props.item.description = event.target.value;
+    props.updateItemState(props.item);
+  }
+
   function handleEditFinished() {
-    if (!itemDescription) {
-      // empty input, delete the item
-      handleDelete();
-    } else {
-      props.item.description = itemDescription;
-      setEditing(false);
-      updateItem(props.item);
+    if (editing) {
+      if (!props.item.description) {
+        // empty input, delete the item
+        handleDelete();
+      } else {
+        props.item.description = props.item.description;
+        setEditing(false);
+        console.log('here?')
+        console.log(props.item.id)
+        updateItem(props.item);
+      }
     }
   }
 
-  var descriptionContent = <span className={classes.itemDescription}>{itemDescription}</span>;
+  var descriptionContent = <span className={classes.itemDescription}>{props.item.description}</span>;
   var editButtons = (
     <div>
-      <ActionIcon variant="subtle" aria-label={'Edit ' + itemDescription} onClick={handleEditClicked}>
+      <ActionIcon variant="subtle" aria-label={'Edit ' + props.item.description} onClick={handleEditClicked}>
         <IconPencil />
       </ActionIcon>
-      <ActionIcon variant="subtle" aria-label={'Delete ' + itemDescription} onClick={handleDelete}>
+      <ActionIcon variant="subtle" aria-label={'Delete ' + props.item.description} onClick={handleDelete}>
         <IconTrash />
       </ActionIcon>
     </div>
@@ -58,15 +68,15 @@ export function Item(props: {item: IItem, removeItem: Function, edit: boolean}) 
     descriptionContent = (
       <TextInput
         className={classes.itemDescription}
-        value={itemDescription} 
+        value={props.item.description} 
         autoFocus
         onBlur={handleEditFinished}
-        onChange={e => setItemDescription(e.target.value)} />
+        onChange={handleDescriptionChanged} />
     );
 
     editButtons = (
       <div>
-        <ActionIcon variant="subtle" aria-label={'Delete ' + itemDescription} onClick={handleDelete}>
+        <ActionIcon variant="subtle" aria-label={'Delete ' + props.item.description} onClick={handleDelete}>
           <IconTrash />
         </ActionIcon>
       </div>
@@ -78,7 +88,7 @@ export function Item(props: {item: IItem, removeItem: Function, edit: boolean}) 
       <Flex align="center">
         <Checkbox
           type="checkbox"
-          checked={checked}
+          checked={props.item.checked}
           onChange={handleChecked} />
         {descriptionContent}
       </Flex>
