@@ -1,0 +1,11 @@
+services:
+  server_app:
+    image: node:22
+    environment:
+      MONGO_HOST: mongodb
+    command: sleep infinity
+    volumes:
+      - /home/dev/groceries:/workspace:cached
+
+  mongodb:
+    image: mongo:7

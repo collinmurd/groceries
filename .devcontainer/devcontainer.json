@@ -1,0 +1,8 @@
+{
+  "name": "Groceries",
+  "dockerComposeFile": "docker-compose.yaml",
+  "service": "server_app",
+  "forwardPorts": [3000, 8000, 27017],
+  "workspaceFolder": "/workspace",
+  "shutdownAction": "stopCompose"
+}
