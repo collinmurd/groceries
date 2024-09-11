@@ -1,7 +1,7 @@
 import express, { Request, Response , Application } from 'express';
 import mongoose from 'mongoose';
 
-import { IItemDao, Item } from './models'
+import { IItemData, Item } from './models/item'
 import { IItem } from '@groceries/shared';
 import { pinoHttp } from 'pino-http';
 import { pino } from 'pino';
@@ -55,7 +55,7 @@ app.get('/items', async (req: Request, res: Response) => {
     .catch(err => res.status(500).send(INTERNAL_SERVER_ERROR))
 });
 
-app.post('/items', (req: Request<any, any, IItemDao>, res: Response<IItem | string>) => {
+app.post('/items', (req: Request<any, any, IItemData>, res: Response<IItem | string>) => {
   const data = new Item({...req.body});
   data.save()
     .then(data => res.send(data.dto()))
@@ -76,7 +76,7 @@ app.post('/items:batchDelete', (req: Request<any, any, string[]>, res: Response)
     });
 });
 
-app.put('/items/:itemId', (req: Request<any, any, IItemDao>, res: Response) => {
+app.put('/items/:itemId', (req: Request<any, any, IItemData>, res: Response) => {
   Item.findByIdAndUpdate(req.params.itemId, {...req.body}, {new: true})
     .then(data => {
       if (data) {
@@ -90,7 +90,7 @@ app.put('/items/:itemId', (req: Request<any, any, IItemDao>, res: Response) => {
     });
 });
 
-app.delete('/items/:itemId', (req: Request<any, any, IItemDao>, res: Response) => {
+app.delete('/items/:itemId', (req: Request<any, any, IItemData>, res: Response) => {
   Item.findByIdAndDelete(req.params.itemId)
     .then(_ => res.status(204).send())
     .catch(err => {
