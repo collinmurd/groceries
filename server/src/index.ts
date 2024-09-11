@@ -5,6 +5,7 @@ import { ItemData, Item } from './models/item'
 import { IItem } from '@groceries/shared';
 import { pinoHttp } from 'pino-http';
 import { pino } from 'pino';
+import { Feature, FeatureData } from './models/feature';
 
 const MONGO_HOST = process.env.MONGO_HOST || '127.0.0.1';
 const ENV = process.env.ENV || 'dev';
@@ -48,6 +49,8 @@ app.use((req, res, next) => {
 app.get('/', (req: Request, res: Response) => {
   res.send('Hello there');
 });
+
+////////// Items
 
 app.get('/items', async (req: Request, res: Response) => {
   Item.find()
@@ -99,6 +102,42 @@ app.delete('/items/:itemId', (req: Request<any, any, ItemData>, res: Response) =
       } else {
         res.status(500).send(INTERNAL_SERVER_ERROR);
       }
+    });
+});
+
+////////// Features
+
+app.post('/features', (req: Request<any, any, FeatureData>, res: Response) => {
+  const data = new Feature({...req.body});
+  data.save()
+    .then(data => res.send(data.dto()))
+    .catch(err => {
+      if (err.name === 'ValidationError') {
+        res.status(400).send(err.message);
+      } else {
+        res.status(500).send(INTERNAL_SERVER_ERROR);
+      }
+    });
+});
+
+app.get('/features', (req: Request, res: Response) => {
+  Feature.find()
+    .then(data => res.send(data.map(item => item.dto())))
+    .catch(err => res.status(500).send(INTERNAL_SERVER_ERROR))
+});
+
+interface FeaturePatchPayload {name?: string, enabled?: string};
+app.patch('/features/:featureId', (req: Request<any, any, FeaturePatchPayload>, res: Response) => {
+  Feature.findByIdAndUpdate(req.params.featureId, {enabled: req.body.enabled}, {new: true})
+    .then(data => {
+      if (data) {
+        res.send(data.dto())
+      } else {
+        res.status(404).send('Not Found')
+      }
+    })
+    .catch(_ => {
+      res.status(500).send(INTERNAL_SERVER_ERROR)
     });
 });
 

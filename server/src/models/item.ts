@@ -7,13 +7,13 @@ export interface ItemData {
   section: string
 };
 
-interface IItemMethods {
+interface ItemMethods {
   dto(): IItem & {id: string | null}
 };
 
-type ItemModel = mongoose.Model<ItemData, {}, IItemMethods>;
+type ItemModel = mongoose.Model<ItemData, {}, ItemMethods>;
 
-const itemSchema = new mongoose.Schema<ItemData, ItemModel, IItemMethods>({
+const itemSchema = new mongoose.Schema<ItemData, ItemModel, ItemMethods>({
   description: {type: String, required: true},
   section: String,
   checked: Boolean
