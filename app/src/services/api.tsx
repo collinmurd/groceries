@@ -1,6 +1,6 @@
 import { IItem } from "@groceries/shared";
 
-var GROCERIES_API_URL = `${window.location.origin}/api`;
+var GROCERIES_API_URL = `${window.location.origin}/groceries/api`;
 if (process.env.NODE_ENV === 'development') {
   GROCERIES_API_URL = 'http://localhost:8000';
 }
