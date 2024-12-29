@@ -1,6 +1,7 @@
 {
     "compilerOptions": {
-        "outDir": "."
+        "outDir": ".",
+        "sourceMap": true
     },
     "references": [
         { "path": "./shared" },
