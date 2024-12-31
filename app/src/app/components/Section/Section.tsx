@@ -2,10 +2,10 @@ import { IItem } from "@groceries/shared";
 import React, { useState } from "react";
 import { Item } from "../Item/Item";
 import { ActionIcon, Flex, TextInput } from '@mantine/core';
-import { createItem, deleteItem } from "../../services/api";
+import { createItem, deleteItem } from "../../../services/api";
 import { IconPlus } from "@tabler/icons-react";
 import classes from './Section.module.css';
-import { useExitOnEscape } from "../../hooks";
+import { useExitOnEscape } from "../../../hooks";
 
 export interface ISectionProps {
   name: string,

@@ -1,12 +1,12 @@
-import { render, screen } from '../../testing-utils';
+import { render, screen } from '../../../testing-utils';
 import React from "react";
 import { Section } from "./Section";
 import { IItem } from "@groceries/shared";
 import userEvent, { UserEvent } from "@testing-library/user-event";
-import { createItem, deleteItem } from "../../services/api";
+import { createItem } from "../../../services/api";
 import { Item } from '../Item/Item';
 
-jest.mock('../../services/api')
+jest.mock('../../../services/api')
 
 const mockName = "My Section";
 const mockData: IItem[] = [

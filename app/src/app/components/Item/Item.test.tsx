@@ -1,10 +1,10 @@
 import React from 'react';
-import { render, screen, userEvent, UserEvent } from '../../testing-utils';
-import { updateItem } from "../../services/api";
+import { render, screen, userEvent, UserEvent } from '../../../testing-utils';
+import { updateItem } from "../../../services/api";
 import { Item } from "./Item";
 import { IItem } from '@groceries/shared';
 
-jest.mock('../../services/api');
+jest.mock('../../../services/api');
 
 const mockData: IItem = {
   id: "1",

@@ -1,13 +1,13 @@
 import React, { useContext, useEffect, useState } from 'react';
-import { batchDeleteItems, createItem, deleteItem, getItems } from '../../services/api';
+import { batchDeleteItems, createItem, deleteItem, getItems } from '../../../services/api';
 import { Section } from '../Section/Section';
 import { Button, Loader, Menu, TextInput } from '@mantine/core';
-import { useExitOnEscape } from '../../hooks';
+import { useExitOnEscape } from '../../../hooks';
 import { IItem } from '@groceries/shared';
 
 import classes from './List.module.css';
 import { Item } from '../Item/Item';
-import { FeaturesContext } from '../../context/featuresContext';
+import { FeaturesContext } from '../../../context/featuresContext';
 
 const defaultSections = ['Produce', 'Meat', 'Dairy', 'Frozen', 'Other'];
 
