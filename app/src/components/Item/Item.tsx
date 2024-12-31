@@ -45,8 +45,6 @@ export function Item(props: IItemProps) {
       } else {
         props.item.description = props.item.description;
         setEditing(false);
-        console.log('here?')
-        console.log(props.item.id)
         updateItem(props.item);
       }
     }
