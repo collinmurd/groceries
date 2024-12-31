@@ -55,7 +55,7 @@ app.get('/', (req: Request, res: Response) => {
 app.get('/items', async (req: Request, res: Response) => {
   Item.find()
     .then(data => res.send(data.map(item => item.dto())))
-    .catch(err => res.status(500).send(INTERNAL_SERVER_ERROR))
+    .catch(_ => res.status(500).send(INTERNAL_SERVER_ERROR))
 });
 
 app.post('/items', (req: Request<any, any, ItemData>, res: Response<IItem | string>) => {
@@ -123,7 +123,7 @@ app.post('/features', (req: Request<any, any, FeatureData>, res: Response) => {
 app.get('/features', (req: Request, res: Response) => {
   Feature.find()
     .then(data => res.send(data.map(item => item.dto())))
-    .catch(err => res.status(500).send(INTERNAL_SERVER_ERROR))
+    .catch(_ => res.status(500).send(INTERNAL_SERVER_ERROR))
 });
 
 interface FeaturePatchPayload {name?: string, enabled?: string};
@@ -141,10 +141,30 @@ app.patch('/features/:featureId', (req: Request<any, any, FeaturePatchPayload>, 
     });
 });
 
+function initFeatures() {
+  // define features
+  const features = [
+    {name: 'default-sections', enabled: true},
+  ];
+
+  features.forEach(feature => {
+    Feature.findOne({name: feature.name})
+      .then(data => {
+        if (!data) {
+          const newFeature = new Feature(feature);
+          newFeature.save();
+        }
+      });
+  });
+}
+
 async function main() {
   logger.info('Connecting to mongoDB');
   await mongoose.connect(`mongodb://${MONGO_HOST}:27017/groceries`);
   mongoose.Schema.Types.String.checkRequired(v => v != null); // 'required' in mongoose by default will reject empty strings, https://github.com/Automattic/mongoose/issues/7150
+
+  logger.info('Initializing features');
+  initFeatures();
 
   app.listen(port, () => {
     logger.info('Server is ready');
