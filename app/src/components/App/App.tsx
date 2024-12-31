@@ -1,17 +1,30 @@
 "use client";
 
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import { List } from '../List/List';
 
 import classes from './App.module.css';
-import { ActionIcon, Button, Menu } from '@mantine/core';
+import { ActionIcon, Menu } from '@mantine/core';
 import { IconAdjustmentsHorizontal } from '@tabler/icons-react';
-
-type FeatureSet = {[feature: string]: boolean};
+import { FeaturesContext, FeatureSet } from '../../context/featuresContext';
+import { getFeatures } from '../../services/api';
+import { IFeature } from '@groceries/shared';
 
 export function App() {
   const [error, setError] = useState<string>("");
   const [features, setFeatures] = useState<FeatureSet>({});
+
+  useEffect(() => {
+    getFeatures()
+      .then(data => {
+        // turn array of features into a map
+        setFeatures(data.reduce((acc: FeatureSet, f: IFeature) => {
+          acc[f.name] = f.enabled;
+          return acc;
+        }, {}));
+      })
+      .catch(_ => setError("Failed to get features... try again later"));
+  }, []);
 
   if (error) {
     return (
@@ -23,7 +36,9 @@ export function App() {
 
   return (
     <div className={classes.app}>
-      <List setError={(error: string) => setError(error)}/>
+      <FeaturesContext.Provider value={features}>
+        <List setError={(error: string) => setError(error)}/>
+      </FeaturesContext.Provider>
     </div>
   );
 }

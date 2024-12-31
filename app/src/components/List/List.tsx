@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import React, { useContext, useEffect, useState } from 'react';
 import { batchDeleteItems, createItem, deleteItem, getItems } from '../../services/api';
 import { Section } from '../Section/Section';
 import { Button, Loader, Menu, TextInput } from '@mantine/core';
@@ -7,12 +7,16 @@ import { IItem } from '@groceries/shared';
 
 import classes from './List.module.css';
 import { Item } from '../Item/Item';
+import { FeaturesContext } from '../../context/featuresContext';
+
+const defaultSections = ['Produce', 'Meat', 'Dairy', 'Frozen', 'Other'];
 
 export function List(props: {setError: Function}) {
   const [items, setItems] = useState<IItem[]>([]);
   const [sections, setSections] = useState<string[]>([]);
   const [addingSection, setAddingSection] = useState(false);
   const [loading, setLoading] = useState(true);
+  const features = useContext(FeaturesContext);
 
   useEffect(() => {
     getItems()
@@ -21,6 +25,9 @@ export function List(props: {setError: Function}) {
 
         var tempSections = new Set<string>();
         data.forEach(i => tempSections.add(i.section));
+        if (features['default-sections']) {
+          defaultSections.forEach(s => tempSections.add(s));
+        }
         setSections([...tempSections]);
 
         setLoading(false);
@@ -29,7 +36,7 @@ export function List(props: {setError: Function}) {
         console.log(err);
         props.setError("Failed to get grocery list... try paper");
       })
-  }, []);
+  }, [features]);
 
   function addNewSection(name: string) {
     setAddingSection(false);

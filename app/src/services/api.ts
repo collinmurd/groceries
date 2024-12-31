@@ -59,3 +59,7 @@ export async function deleteItem(item: IItem) {
 export async function batchDeleteItems(ids: string[]) {
   return call('POST', '/items:batchDelete', ids);
 }
+
+export async function getFeatures() {
+  return call('GET', '/features');
+}
