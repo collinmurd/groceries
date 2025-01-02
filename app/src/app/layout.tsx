@@ -1,5 +1,5 @@
-import { MantineProvider } from '@mantine/core'
 import type { Metadata } from 'next'
+import GlobalProvider from './components/GlobalProvider'
  
 export const metadata: Metadata = {
   title: 'Groceries',
@@ -14,9 +14,9 @@ export default function RootLayout({
   return (
     <html lang="en">
       <body>
-        <MantineProvider defaultColorScheme="auto" >
+        <GlobalProvider>
           <div id="root">{children}</div>
-        </MantineProvider>
+        </GlobalProvider>
       </body>
     </html>
   )

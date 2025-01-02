@@ -8,15 +8,17 @@ import { IItem } from '@groceries/shared';
 import classes from './List.module.css';
 import { Item } from '../Item/Item';
 import { FeaturesContext } from '../../../context/featuresContext';
+import { SetErrorContext } from '../../../context/errorContext';
 
 const defaultSections = ['Produce', 'Meat', 'Dairy', 'Frozen', 'Other'];
 
-export function List(props: {setError: Function}) {
+export function List() {
   const [items, setItems] = useState<IItem[]>([]);
   const [sections, setSections] = useState<string[]>([]);
   const [addingSection, setAddingSection] = useState(false);
   const [loading, setLoading] = useState(true);
   const features = useContext(FeaturesContext);
+  const setError = useContext(SetErrorContext);
 
   useEffect(() => {
     getItems()
@@ -34,7 +36,7 @@ export function List(props: {setError: Function}) {
       })
       .catch(err => {
         console.log(err);
-        props.setError("Failed to get grocery list... try paper");
+        setError("Failed to get grocery list... try paper");
       })
   }, [features]);
 

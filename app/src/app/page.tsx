@@ -16,34 +16,9 @@ export default function Page() {
 }
 
 export function App() {
-  const [error, setError] = useState<string>("");
-  const [features, setFeatures] = useState<FeatureSet>({});
-
-  useEffect(() => {
-    getFeatures()
-      .then(data => {
-        // turn array of features into a map
-        setFeatures(data.reduce((acc: FeatureSet, f: IFeature) => {
-          acc[f.name] = f.enabled;
-          return acc;
-        }, {}));
-      })
-      .catch(_ => setError("Failed to get features... try again later"));
-  }, []);
-
-  if (error) {
-    return (
-      <div className={classes.app}>
-        <ErrorPage message={error} />
-      </div>
-    )
-  }
-
   return (
     <div className={classes.app}>
-      <FeaturesContext.Provider value={features}>
-        <List setError={(error: string) => setError(error)}/>
-      </FeaturesContext.Provider>
+      <List />
       <div>
         <ActionIcon variant="subtle" aria-label="features">
           <Link href="/features">
@@ -54,12 +29,3 @@ export function App() {
     </div>
   );
 }
-
-function ErrorPage(props: {message: string}) {
-  return (
-    <div>
-      <h2>{props.message}</h2>
-    </div>
-  )
-}
-
