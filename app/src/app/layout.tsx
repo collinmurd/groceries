@@ -1,5 +1,6 @@
 import type { Metadata } from 'next'
 import GlobalProvider from './components/GlobalProvider'
+import classes from './layout.module.css';
  
 export const metadata: Metadata = {
   title: 'Groceries',
@@ -14,9 +15,11 @@ export default function RootLayout({
   return (
     <html lang="en">
       <body>
-        <GlobalProvider>
-          <div id="root">{children}</div>
-        </GlobalProvider>
+        <div className={classes.app}>
+          <GlobalProvider>
+            <div id="root">{children}</div>
+          </GlobalProvider>
+        </div>
       </body>
     </html>
   )

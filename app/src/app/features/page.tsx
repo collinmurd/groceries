@@ -1,9 +1,15 @@
-import { Menu, ActionIcon } from "@mantine/core";
-import { FeatureSet } from "../../context/featuresContext";
+"use client";
+
+import { ActionIcon, Switch } from "@mantine/core";
+import { FeaturesContext, FeatureSet, SetFeaturesContext } from "../../context/featuresContext";
 import { IconArrowLeft } from "@tabler/icons-react";
 import Link from "next/link";
+import { useContext, useState } from "react";
 
 export default function Page() {
+  const features = useContext(FeaturesContext);
+  const setFeatures = useContext(SetFeaturesContext);
+
   return (
     <div>
       <ActionIcon variant="subtle" aria-label="back">
@@ -12,23 +18,42 @@ export default function Page() {
         </Link>
       </ActionIcon>
       <h2>Features</h2>
+      <FeaturesMenu features={features} setFeatures={setFeatures} />
     </div>
   )
 }
 
 function FeaturesMenu(props: {features: FeatureSet, setFeatures: (features: FeatureSet) => void}) {
 
-  const featureOptions = Object.entries(props.features).map(f => {
-    const feature = f[0]
-    const enabled = f[1]
+  const menuItems = Object.keys(props.features).map((featureName) => {
+    const toggleFeature = (name: string) => {
+      const newFeatures = {...props.features};
+      newFeatures[name] = !newFeatures[name];
+      props.setFeatures(newFeatures);
+    }
 
-    return (
-      <Menu.Item>
-      </Menu.Item>
-    )
+    return <FeatureToggle key={featureName} name={featureName} enabled={props.features[featureName]} toggleFeature={toggleFeature} />
   });
 
   return (
-    <h2>Features</h2>
+    <div>
+      {menuItems}
+    </div>
+  );
+}
+
+function FeatureToggle(props: {name: string, enabled: boolean, toggleFeature: (name: string) => void}) {
+  const [enabled, setEnabled] = useState(props.enabled);
+
+  function handleToggle() {
+    setEnabled(!enabled);
+    props.toggleFeature(props.name);
+  }
+
+  return (
+    <Switch
+      label={props.name}
+      checked={props.enabled}
+      onChange={handleToggle} />
   );
 }
