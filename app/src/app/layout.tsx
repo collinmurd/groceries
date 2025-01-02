@@ -1,3 +1,4 @@
+import { MantineProvider } from '@mantine/core'
 import type { Metadata } from 'next'
  
 export const metadata: Metadata = {
@@ -13,7 +14,9 @@ export default function RootLayout({
   return (
     <html lang="en">
       <body>
-        <div id="root">{children}</div>
+        <MantineProvider defaultColorScheme="auto" >
+          <div id="root">{children}</div>
+        </MantineProvider>
       </body>
     </html>
   )

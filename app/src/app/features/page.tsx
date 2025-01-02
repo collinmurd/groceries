@@ -1,10 +1,16 @@
 import { Menu, ActionIcon } from "@mantine/core";
-import { IconAdjustmentsHorizontal } from "@tabler/icons-react";
 import { FeatureSet } from "../../context/featuresContext";
+import { IconArrowLeft } from "@tabler/icons-react";
+import Link from "next/link";
 
 export default function Page() {
   return (
     <div>
+      <ActionIcon variant="subtle" aria-label="back">
+        <Link href="/">
+          <IconArrowLeft />
+        </Link>
+      </ActionIcon>
       <h2>Features</h2>
     </div>
   )
@@ -23,15 +29,6 @@ function FeaturesMenu(props: {features: FeatureSet, setFeatures: (features: Feat
   });
 
   return (
-    <Menu shadow='md' width={200}>
-      <Menu.Target>
-        <ActionIcon variant="subtle" aria-label="features menu">
-          <IconAdjustmentsHorizontal />
-        </ActionIcon>
-      </Menu.Target>
-      <Menu.Dropdown>
-        {featureOptions}
-      </Menu.Dropdown>
-    </Menu>
+    <h2>Features</h2>
   );
 }
