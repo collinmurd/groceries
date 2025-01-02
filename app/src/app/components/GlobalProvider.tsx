@@ -10,8 +10,9 @@ import { SetErrorContext } from "../../context/errorContext";
 
 export default function GlobalProvider({ children }: { children: React.ReactNode }) {
   const [features, setFeatures] = useState<FeatureSet>({});
-  const [error, setError] = useState<string | null>(null);
+  const [error, setError] = useState<string | null>(null); // central error state
 
+  // retrieve features and make them globally available to the app
   useEffect(() => {
     getFeatures()
       .then(data => {
