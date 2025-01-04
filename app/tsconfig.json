@@ -19,13 +19,26 @@
     "resolveJsonModule": true,
     "isolatedModules": true,
     "noEmit": true,
-    "jsx": "react-jsx",
-    "downlevelIteration": true
+    "jsx": "preserve",
+    "downlevelIteration": true,
+    "incremental": true,
+    "plugins": [
+      {
+        "name": "next"
+      }
+    ]
   },
   "include": [
-    "src"
+    ".next/types/**/*.ts",
+    "src",
+    "./build/types/**/*.ts"
   ],
   "references": [
-    { "path": "../shared" }
+    {
+      "path": "../shared"
+    }
+  ],
+  "exclude": [
+    "node_modules"
   ]
 }

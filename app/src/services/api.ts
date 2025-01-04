@@ -1,9 +1,4 @@
-import { IItem } from "@groceries/shared";
-
-var GROCERIES_API_URL = `${window.location.origin}/groceries/api`;
-if (process.env.NODE_ENV === 'development') {
-  GROCERIES_API_URL = 'http://localhost:8000';
-}
+import { IFeature, IItem } from "@groceries/shared";
 
 export class GroceriesApiError extends Error {
   constructor(msg: string) {
@@ -12,6 +7,13 @@ export class GroceriesApiError extends Error {
 }
 
 type HttpMethod = 'GET' | 'POST' | 'PUT' | 'DELETE'
+
+function getUrl() {
+  if (process.env.NODE_ENV === 'development') {
+    return 'http://localhost:8000';
+  }
+  return `${window.location.origin}/groceries/api`;
+}
 
 async function call(method: HttpMethod, path: string, body: any = null) {
   var headers = new Headers();
@@ -25,7 +27,7 @@ async function call(method: HttpMethod, path: string, body: any = null) {
     headers.append('Content-Type', 'application/json');
   }
 
-  return fetch(`${GROCERIES_API_URL}${path}`, opts)
+  return fetch(`${getUrl()}${path}`, opts)
     .then(resp => {
       if (!resp.ok) {
         throw new GroceriesApiError(resp.statusText)
@@ -56,4 +58,13 @@ export async function deleteItem(item: IItem) {
 
 export async function batchDeleteItems(ids: string[]) {
   return call('POST', '/items:batchDelete', ids);
+}
+
+export async function getFeatures() {
+  return call('GET', '/features');
+}
+
+export async function updateFeature(feature: IFeature) {
+  const { id, ...data } = feature;
+  return call('PUT', `/features/${feature.id}`, data);
 }

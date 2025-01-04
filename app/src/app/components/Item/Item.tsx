@@ -1,10 +1,10 @@
 import { IItem } from "@groceries/shared";
 import React, { useState } from "react";
-import { updateItem } from '../../services/api';
+import { updateItem } from '../../../services/api';
 import { ActionIcon, Checkbox, Flex, TextInput } from "@mantine/core";
 import classes from './Item.module.css'
 import { IconPencil, IconTrash } from "@tabler/icons-react";
-import { useExitOnEscape } from "../../hooks";
+import { useExitOnEscape } from "../../../hooks";
 
 export interface IItemProps {
   item: IItem,
@@ -45,8 +45,6 @@ export function Item(props: IItemProps) {
       } else {
         props.item.description = props.item.description;
         setEditing(false);
-        console.log('here?')
-        console.log(props.item.id)
         updateItem(props.item);
       }
     }
