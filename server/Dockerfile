@@ -24,6 +24,10 @@ FROM node:22-alpine AS production
 WORKDIR /opt/server
 COPY --from=build /base/shared ./node_modules/@groceries/shared
 
+COPY server/package.json package-lock.json ./
+
+RUN npm ci --omit=dev
+
 COPY --from=build /base/server/dist ./dist
 
 EXPOSE 80
