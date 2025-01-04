@@ -1,4 +1,4 @@
-import { IItem } from "@groceries/shared";
+import { IFeature, IItem } from "@groceries/shared";
 
 export class GroceriesApiError extends Error {
   constructor(msg: string) {
@@ -62,4 +62,9 @@ export async function batchDeleteItems(ids: string[]) {
 
 export async function getFeatures() {
   return call('GET', '/features');
+}
+
+export async function updateFeature(feature: IFeature) {
+  const { id, ...data } = feature;
+  return call('PUT', `/features/${feature.id}`, data);
 }

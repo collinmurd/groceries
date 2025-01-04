@@ -1,14 +1,15 @@
 "use client";
 
 import { ActionIcon, Switch } from "@mantine/core";
-import { FeaturesContext, FeatureSet, SetFeaturesContext } from "../../context/featuresContext";
+import { FeaturesContext, FeatureSet, ToggleFeatureContext } from "../../context/featuresContext";
 import { IconArrowLeft } from "@tabler/icons-react";
 import Link from "next/link";
 import { useContext, useState } from "react";
+import { IFeature } from "@groceries/shared";
 
 export default function Page() {
   const features = useContext(FeaturesContext);
-  const setFeatures = useContext(SetFeaturesContext);
+  const toggleFeature = useContext(ToggleFeatureContext);
 
   return (
     <div>
@@ -18,21 +19,18 @@ export default function Page() {
         </Link>
       </ActionIcon>
       <h2>Features</h2>
-      <FeaturesMenu features={features} setFeatures={setFeatures} />
+      <FeaturesMenu features={features} toggleFeature={toggleFeature} />
     </div>
   )
 }
 
-function FeaturesMenu(props: {features: FeatureSet, setFeatures: (features: FeatureSet) => void}) {
+function FeaturesMenu(props: {features: FeatureSet, toggleFeature: (feature: string) => void}) {
 
-  const menuItems = Object.keys(props.features).map((featureName) => {
-    const toggleFeature = (name: string) => {
-      const newFeatures = {...props.features};
-      newFeatures[name] = !newFeatures[name];
-      props.setFeatures(newFeatures);
-    }
-
-    return <FeatureToggle key={featureName} name={featureName} enabled={props.features[featureName]} toggleFeature={toggleFeature} />
+  const menuItems = props.features.getAllFeatures().map(feature => {
+    return <FeatureToggle
+      key={feature.name}
+      feature={feature}
+      toggleFeature={props.toggleFeature} />
   });
 
   return (
@@ -42,18 +40,18 @@ function FeaturesMenu(props: {features: FeatureSet, setFeatures: (features: Feat
   );
 }
 
-function FeatureToggle(props: {name: string, enabled: boolean, toggleFeature: (name: string) => void}) {
-  const [enabled, setEnabled] = useState(props.enabled);
+function FeatureToggle(props: {feature: IFeature, toggleFeature: (name: string) => void}) {
+  const [enabled, setEnabled] = useState(props.feature.enabled);
 
   function handleToggle() {
     setEnabled(!enabled);
-    props.toggleFeature(props.name);
+    props.toggleFeature(props.feature.name);
   }
 
   return (
     <Switch
-      label={props.name}
-      checked={props.enabled}
+      label={props.feature.name}
+      checked={enabled}
       onChange={handleToggle} />
   );
 }

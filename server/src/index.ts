@@ -126,9 +126,8 @@ app.get('/features', (req: Request, res: Response) => {
     .catch(_ => res.status(500).send(INTERNAL_SERVER_ERROR))
 });
 
-interface FeaturePatchPayload {name?: string, enabled?: string};
-app.patch('/features/:featureId', (req: Request<any, any, FeaturePatchPayload>, res: Response) => {
-  Feature.findByIdAndUpdate(req.params.featureId, {enabled: req.body.enabled}, {new: true})
+app.put('/features/:featureId', (req: Request<any, any, FeatureData>, res: Response) => {
+  Feature.findByIdAndUpdate(req.params.featureId, {...req.body}, {new: true})
     .then(data => {
       if (data) {
         res.send(data.dto())

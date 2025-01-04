@@ -27,7 +27,7 @@ export function List() {
 
         var tempSections = new Set<string>();
         data.forEach(i => tempSections.add(i.section));
-        if (features['default-sections']) {
+        if (features.check('default-sections')) {
           defaultSections.forEach(s => tempSections.add(s));
         }
         setSections([...tempSections]);
