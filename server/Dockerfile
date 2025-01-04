@@ -1,5 +1,5 @@
 # run from monorepo base
-FROM node:22-alpine as build
+FROM node:22-alpine AS build
 
 WORKDIR /base
 
@@ -19,14 +19,10 @@ COPY server/src server/
 RUN npm run build --workspace=server
 
 # prod build
-FROM node:22-alpine as production
+FROM node:22-alpine AS production
 
 WORKDIR /opt/server
 COPY --from=build /base/shared ./node_modules/@groceries/shared
-
-COPY server/package.json package-lock.json ./
-
-RUN npm ci --omit=dev
 
 COPY --from=build /base/server/dist ./dist
 
