@@ -14,8 +14,8 @@ export function App() {
   return (
     <div>
       <List />
-      <div>
-        <ActionIcon variant="subtle" aria-label="features">
+      <div style={{ display: 'flex', justifyContent: 'center', marginTop: 20, marginBottom: 20 }}>
+        <ActionIcon variant="subtle" size="xl" aria-label="features">
           <Link href="/features">
             <IconSettings />
           </Link>
