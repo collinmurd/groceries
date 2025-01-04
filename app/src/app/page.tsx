@@ -10,7 +10,7 @@ export default function Page() {
   return <App />;
 }
 
-export function App() {
+function App() {
   return (
     <div>
       <List />

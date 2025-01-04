@@ -12,7 +12,7 @@ describe('Render', () => {
     (getFeatures as jest.Mock).mockReturnValue(Promise.resolve([]));
     render(<Page />, { wrapper: GlobalProvider });
 
-    expect(await screen.findByText('Failed').catch(_ => true)).toBeTruthy();
+    expect(screen.findByText('Failed')).rejects.toBeTruthy();
   });
 });
 
@@ -24,7 +24,7 @@ describe('handle errors', () => {
     render(<Page />, { wrapper: GlobalProvider });
 
     expect(await screen.findByText('Failed to get features... try again later')).toBeInTheDocument();
-    expect(screen.findByText('List Content').catch(e => true)).toBeTruthy();
+    expect(screen.findByText('List Content')).rejects.toBeTruthy();
   });
 
   it('should display the error page when an error getting list items', async () => {
@@ -34,6 +34,6 @@ describe('handle errors', () => {
     render(<Page />, { wrapper: GlobalProvider });
 
     expect(await screen.findByText('Failed to get grocery list... try paper')).toBeInTheDocument();
-    expect(screen.findByText('List Content').catch(e => true)).toBeTruthy();
+    expect(screen.findByText('List Content')).rejects.toBeTruthy();
   });
 });
