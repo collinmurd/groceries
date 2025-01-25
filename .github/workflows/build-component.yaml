@@ -33,7 +33,7 @@ jobs:
         npm run test --workspace=${{ inputs.component }}
 
   build:
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-24.04-arm
     needs: [test]
     permissions:
       packages: write
@@ -67,5 +67,4 @@ jobs:
         file: ${{ inputs.component }}/Dockerfile
         tags: ${{ steps.image_metadata.outputs.tags }}
         labels: ${{ steps.image_metadata.outputs.labels }}
-        platforms: linux/amd64,linux/arm64
         push: true
