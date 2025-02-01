@@ -21,7 +21,9 @@ export function Section(props: ISectionProps) {
 
   function addNewItem(itemDescription: string) {
     setAddingItem(false);
-    props.addNewItem(itemDescription, props.name);
+    if (itemDescription) {
+      props.addNewItem(itemDescription, props.name);
+    }
   }
 
   return (
