@@ -16,7 +16,7 @@ function App() {
       <List />
       <div style={{ display: 'flex', justifyContent: 'center', marginTop: 20, marginBottom: 20 }}>
         <ActionIcon variant="subtle" size="xl" aria-label="features">
-          <Link href="/features">
+          <Link className="icon-link" href="/features">
             <IconSettings />
           </Link>
         </ActionIcon>

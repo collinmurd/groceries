@@ -14,7 +14,7 @@ export default function Page() {
   return (
     <div>
       <ActionIcon variant="subtle" aria-label="back">
-        <Link href="/">
+        <Link className="icon-link" href="/">
           <IconArrowLeft />
         </Link>
       </ActionIcon>
