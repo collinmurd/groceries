@@ -5,11 +5,20 @@
   "version": "0.2.0",
   "configurations": [
     {
-      "type": "chrome",
+      "name": "Next.js: debug full stack",
+      "type": "node",
       "request": "launch",
-      "name": "Debug app",
-      "url": "http://localhost:3000",
-      "webRoot": "${workspaceFolder}/app"
+      "program": "${workspaceFolder}/node_modules/.bin/next",
+      "runtimeArgs": ["--inspect"],
+      "skipFiles": ["<node_internals>/**"],
+      "cwd": "${workspaceFolder}/app",
+      "serverReadyAction": {
+        "action": "debugWithEdge",
+        "killOnServerStop": true,
+        "pattern": "- Local:.+(https?://.+)",
+        "uriFormat": "%s/groceries",
+        "webRoot": "${workspaceFolder}"
+      }
     }
   ]
 }
