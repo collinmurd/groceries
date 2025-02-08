@@ -1,17 +1,15 @@
-import express, { Request, Response , Application } from 'express';
+import express, { Application, Request, Response } from 'express';
 import mongoose from 'mongoose';
 
-import { ItemData, Item } from './models/item'
 import { IItem } from '@groceries/shared';
-import { pinoHttp } from 'pino-http';
 import { pino } from 'pino';
+import { pinoHttp } from 'pino-http';
+import authRouter from './auth';
+import ENVIRONMENT from './env';
 import { Feature, FeatureData } from './models/feature';
-
-const MONGO_HOST = process.env.MONGO_HOST || '127.0.0.1';
-const ENV = process.env.ENV || 'dev';
+import { Item, ItemData } from './models/item';
 
 const app: Application = express();
-const port = process.env.PORT || 8000;
 const logger = pino();
 
 const INTERNAL_SERVER_ERROR = 'Internal Server Error';
@@ -32,10 +30,10 @@ app.use(pinoHttp({
 
 // CORS
 app.use((req, res, next) => {
-  if (ENV === 'dev') {
+  if (ENVIRONMENT.NAME === 'dev') {
     // allow any origin for dev
     res.header('Access-Control-Allow-Origin', req.headers.origin)
-  } else if (ENV === 'prod') {
+  } else if (ENVIRONMENT.NAME === 'prod') {
     // TODO: determine origin from runtime environment
     // just gonna hardcode this for now... gonna need to fix http too...
     res.header('Access-Control-Allow-Origin', 'http://149.130.214.183');
@@ -49,6 +47,11 @@ app.use((req, res, next) => {
 app.get('/', (req: Request, res: Response) => {
   res.send('Hello there');
 });
+
+
+////////// Auth
+
+app.use('/auth', authRouter);
 
 ////////// Items
 
@@ -159,13 +162,13 @@ function initFeatures() {
 
 async function main() {
   logger.info('Connecting to mongoDB');
-  await mongoose.connect(`mongodb://${MONGO_HOST}:27017/groceries`);
+  await mongoose.connect(`mongodb://${ENVIRONMENT.MONGO_HOST}:27017/groceries`);
   mongoose.Schema.Types.String.checkRequired(v => v != null); // 'required' in mongoose by default will reject empty strings, https://github.com/Automattic/mongoose/issues/7150
 
   logger.info('Initializing features');
   initFeatures();
 
-  app.listen(port, () => {
+  app.listen(ENVIRONMENT.PORT, () => {
     logger.info('Server is ready');
   });
 }
