@@ -6,7 +6,7 @@ import ENVIRONMENT from './env';
 
 const authRouter = express.Router();
 
-const ALLOWED_USERS = ['collinmurd']; // update with allowed GitHub usernames
+const ALLOWED_USERS = ['collinmurd1']; // update with allowed GitHub usernames
 
 // In-memory session store for demonstration purposes
 const sessions = new Map<string, { username: string; createdAt: Date }>();
@@ -54,7 +54,7 @@ authRouter.get('/github/callback', async (req: Request, res: Response) => {
     });
     const username = userResponse.data.login as string;
     if (!ALLOWED_USERS.includes(username)) {
-      return res.status(403).send('User not allowed');
+      return res.redirect(ENVIRONMENT.CLIENT_REDIRECT_UNAUTHORIZED);
     }
 
     // 6. Create session in the database (here, in memory) and session token
@@ -65,7 +65,7 @@ authRouter.get('/github/callback', async (req: Request, res: Response) => {
       httpOnly: true,
       secure: process.env.NODE_ENV === 'production',
       sameSite: 'lax',
-    });
+    })
     res.redirect(ENVIRONMENT.CLIENT_REDIRECT_URI);
   } catch (err) {
     console.error(err);
