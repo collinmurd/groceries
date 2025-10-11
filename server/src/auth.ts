@@ -6,7 +6,10 @@ if (!process.env.JWT_SECRET) {
 }
 const JWT_SECRET = new TextEncoder().encode(process.env.JWT_SECRET);
 
-const VALID_PIN = process.env.AUTH_PIN || '1234';
+if (!process.env.AUTH_PIN) {
+  throw new Error('AUTH_PIN environment variable must be set for authentication.');
+}
+const VALID_PIN = process.env.AUTH_PIN;
 const TOKEN_EXPIRY = '30d'; // Token expiry duration
 
 export async function login(req: Request, res: Response) {
