@@ -6,6 +6,8 @@ services:
       - "8000:8000"
     environment:
       MONGO_HOST: mongodb
+      AUTH_PIN: 1234
+      JWT_SECRET: 1fbdc4afc767df89b48030b3d38364d773054fa862cb4aa1f489f1083a9701fccae598ce19cc42917b45f0abfb373e8897c5801b9b07882c79c5a3981da74ea2
 
   app:
     image: ghcr.io/collinmurd/groceries-app:latest
