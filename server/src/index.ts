@@ -1,3 +1,7 @@
+// Load environment variables as early as possible
+import dotenv from 'dotenv';
+dotenv.config();
+
 import express, { Request, Response , Application } from 'express';
 import mongoose from 'mongoose';
 
