@@ -4,7 +4,7 @@ import { getAuthProvider } from "./authProvider";
 
 let secretClient: secrets.SecretsClient | undefined;
 
-function getSecretByName(secretName: string): Promise<string> {
+async function getSecretByName(secretName: string): Promise<string> {
   // check the local env first
   if (process.env[secretName]) {
     return Promise.resolve(process.env[secretName] as string);
@@ -16,7 +16,7 @@ function getSecretByName(secretName: string): Promise<string> {
   }
 
   if (!secretClient) {
-    secretClient = new secrets.SecretsClient({authenticationDetailsProvider: getAuthProvider()});
+    secretClient = new secrets.SecretsClient({authenticationDetailsProvider: await getAuthProvider()});
   }
 
   return secretClient.getSecretBundleByName(secretRequest)
