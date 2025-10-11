@@ -1,3 +1,7 @@
+// Load environment variables as early as possible
+import dotenv from 'dotenv';
+dotenv.config();
+
 import express, { Request, Response , Application } from 'express';
 import mongoose from 'mongoose';
 
@@ -6,6 +10,7 @@ import { IItem } from '@groceries/shared';
 import { pinoHttp } from 'pino-http';
 import { pino } from 'pino';
 import { Feature, FeatureData } from './models/feature';
+import { login, authenticateToken } from './auth';
 
 const MONGO_HOST = process.env.MONGO_HOST || '127.0.0.1';
 const ENV = process.env.ENV || 'dev';
@@ -41,14 +46,28 @@ app.use((req, res, next) => {
     res.header('Access-Control-Allow-Origin', 'http://149.130.214.183');
   }
 
-  res.header('Access-Control-Allow-Headers', 'Origin, X-Requested-With, Content-Type, Accept, authorization');
+  res.header('Access-Control-Allow-Headers', 'Origin, X-Requested-With, Content-Type, Accept, Authorization');
   res.header('Access-Control-Allow-Methods', 'GET, POST, OPTIONS, PUT, DELETE');
+  
+  // Handle preflight requests
+  if (req.method === 'OPTIONS') {
+    res.sendStatus(200);
+    return;
+  }
+  
   next();
 });
 
 app.get('/', (req: Request, res: Response) => {
   res.send('Hello there');
 });
+
+// Auth routes
+app.post('/auth/login', login);
+
+// Protected routes - all API endpoints require authentication
+app.use('/items', authenticateToken);
+app.use('/features', authenticateToken);
 
 ////////// Items
 

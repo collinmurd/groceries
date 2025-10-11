@@ -6,6 +6,12 @@ export class GroceriesApiError extends Error {
   }
 }
 
+export class GroceriesApiAuthError extends GroceriesApiError {
+  constructor(msg: string) {
+    super(msg);
+  }
+}
+
 type HttpMethod = 'GET' | 'POST' | 'PUT' | 'DELETE'
 
 function getUrl() {
@@ -15,8 +21,22 @@ function getUrl() {
   return `${window.location.origin}/groceries/api`;
 }
 
+function getToken() {
+  if (typeof window !== 'undefined') {
+    return localStorage.getItem('accessToken');
+  }
+  return null;
+}
+
 async function call(method: HttpMethod, path: string, body: any = null) {
   var headers = new Headers();
+  
+  // Add auth header if token exists
+  const token = getToken();
+  if (token) {
+    headers.append('Authorization', `Bearer ${token}`);
+  }
+  
   var opts: RequestInit = {
     method: method,
     headers: headers
@@ -29,13 +49,21 @@ async function call(method: HttpMethod, path: string, body: any = null) {
 
   return fetch(`${getUrl()}${path}`, opts)
     .then(resp => {
+      if (resp.status === 401) {
+        throw new GroceriesApiAuthError('Unauthorized');
+      }
       if (!resp.ok) {
         throw new GroceriesApiError(resp.statusText)
       }
       return resp
     })
     .then(resp => resp.status != 204 ? resp.json() : "")
-    .catch(err => {throw new GroceriesApiError(err)});
+    .catch(err => {
+      if (err instanceof GroceriesApiAuthError) {
+        throw err;
+      }
+      throw new GroceriesApiError(err.message || 'API Error');
+    });
 }
 
 export async function getItems(): Promise<IItem[]> {
