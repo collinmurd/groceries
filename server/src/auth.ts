@@ -1,9 +1,10 @@
 import { SignJWT, jwtVerify } from 'jose';
 import { Request, Response, NextFunction } from 'express';
 
-const JWT_SECRET = new TextEncoder().encode(
-  process.env.JWT_SECRET || 'your-secret-key-change-in-production'
-);
+if (!process.env.JWT_SECRET) {
+  throw new Error('JWT_SECRET environment variable must be set');
+}
+const JWT_SECRET = new TextEncoder().encode(process.env.JWT_SECRET);
 
 const VALID_PIN = process.env.AUTH_PIN || '1234';
 const TOKEN_EXPIRY = '30d'; // Token expiry duration
