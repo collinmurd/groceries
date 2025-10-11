@@ -3,7 +3,7 @@
 import '@mantine/core/styles.css';
 import React, { useState } from 'react';
 import { useAuth } from '../../context/authContext';
-import { Button, TextInput, Checkbox, Stack, Title, Alert, Center, Paper } from '@mantine/core';
+import { Button, TextInput, Stack, Title, Alert, Center, Paper } from '@mantine/core';
 import { IconLock, IconAlertCircle } from '@tabler/icons-react';
 
 export function LockScreen() {
