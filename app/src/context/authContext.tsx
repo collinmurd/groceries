@@ -7,8 +7,6 @@ interface AuthContextType {
   login: (pin: string) => Promise<void>;
   logout: () => void;
   error: string | null;
-  rememberDevice: boolean;
-  setRememberDevice: (remember: boolean) => void;
 }
 
 const AuthContext = createContext<AuthContextType>({
@@ -18,8 +16,6 @@ const AuthContext = createContext<AuthContextType>({
   login: async () => {},
   logout: () => {},
   error: null,
-  rememberDevice: false,
-  setRememberDevice: () => {},
 });
 
 export const useAuth = () => useContext(AuthContext);
@@ -34,15 +30,13 @@ function getApiUrl() {
 export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children }) => {
   const [token, setToken] = useState<string | null>(null);
   const [error, setError] = useState<string | null>(null);
-  const [rememberDevice, setRememberDevice] = useState<boolean>(true);
-  const [isLoading, setIsLoading] = useState(true); // Add loading state
+  const [isLoading, setIsLoading] = useState(true);
 
   useEffect(() => {
     if (typeof window !== 'undefined') {
       const stored = localStorage.getItem('accessToken');
-      const shouldRemember = localStorage.getItem('rememberDevice') !== 'false';
       
-      if (stored && shouldRemember) {
+      if (stored) {
         // Validate token by making a test API call
         validateToken(stored).then(isValid => {
           if (isValid) {
@@ -56,7 +50,6 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
       } else {
         setIsLoading(false);
       }
-      setRememberDevice(shouldRemember);
     } else {
       setIsLoading(false);
     }
@@ -95,10 +88,7 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
       setToken(data.accessToken);
 
       if (typeof window !== 'undefined') {
-        if (rememberDevice) {
-          localStorage.setItem('accessToken', data.accessToken);
-        }
-        localStorage.setItem('rememberDevice', rememberDevice.toString());
+        localStorage.setItem('accessToken', data.accessToken);
       }
     } catch (err: any) {
       setError(err.message || 'Login failed');
@@ -124,8 +114,6 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
         login, 
         logout, 
         error,
-        rememberDevice,
-        setRememberDevice
       }}
     >
       {children}

@@ -5,7 +5,6 @@ const JWT_SECRET = new TextEncoder().encode(
   process.env.JWT_SECRET || 'your-secret-key-change-in-production'
 );
 
-// Simple PIN validation - in production you'd hash this or use a database
 const VALID_PIN = process.env.AUTH_PIN || '1234';
 const TOKEN_EXPIRY = '30d'; // Token expiry duration
 
@@ -17,7 +16,7 @@ export async function login(req: Request, res: Response) {
       return res.status(401).json({ error: 'Invalid PIN' });
     }
 
-    // Create JWT token with 30 day expiry for mobile convenience
+    // Create JWT 
     const token = await new SignJWT({ authorized: true })
       .setProtectedHeader({ alg: 'HS256' })
       .setIssuedAt()

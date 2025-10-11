@@ -23,7 +23,6 @@ function GlobalProvidersInner({ children }: { children: React.ReactNode }) {
   const { isAuthenticated, isLoading: authLoading } = useAuth();
   const [features, setFeatures] = useState<IFeature[]>([]);
   const [error, setError] = useState<string | null>(null);
-  const [isLoading, setIsLoading] = useState(false);
 
   let featureSet = new FeatureSet(features);
 
@@ -46,7 +45,6 @@ function GlobalProvidersInner({ children }: { children: React.ReactNode }) {
   const loadFeatures = async () => {
     if (!isAuthenticated) return;
     
-    setIsLoading(true);
     try {
       const data = await getFeatures();
       setFeatures(data);
@@ -59,8 +57,6 @@ function GlobalProvidersInner({ children }: { children: React.ReactNode }) {
       // For other errors (like CORS/network), show a more user-friendly message
       console.error('Failed to load features:', e);
       setError("Unable to connect to server. Please make sure the server is running and try refreshing the page.");
-    } finally {
-      setIsLoading(false);
     }
   };
 

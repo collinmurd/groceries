@@ -7,7 +7,7 @@ import { Button, TextInput, Checkbox, Stack, Title, Alert, Center, Paper } from 
 import { IconLock, IconAlertCircle } from '@tabler/icons-react';
 
 export function LockScreen() {
-  const { login, error, rememberDevice, setRememberDevice } = useAuth();
+  const { login, error } = useAuth();
   const [pin, setPin] = useState('');
   const [loading, setLoading] = useState(false);
 
@@ -54,13 +54,6 @@ export function LockScreen() {
               inputMode="numeric"
               pattern="[0-9]*"
               autoFocus
-            />
-            
-            <Checkbox
-              checked={rememberDevice}
-              onChange={(e) => setRememberDevice(e.currentTarget.checked)}
-              label="Remember this device"
-              size="sm"
             />
             
             <Button
