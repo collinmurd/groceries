@@ -1,5 +1,5 @@
 
-import { Alert, Button, Center, Stack, Title } from '@mantine/core';
+import { Alert, Button, Center, Stack } from '@mantine/core';
 import { IconAlertTriangle, IconRefresh } from '@tabler/icons-react';
 
 export default function ErrorHandler(props: { children: React.ReactNode, error: string | null }) {
