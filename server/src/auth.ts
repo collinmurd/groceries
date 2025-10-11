@@ -1,15 +1,27 @@
 import { SignJWT, jwtVerify } from 'jose';
 import { Request, Response, NextFunction } from 'express';
+import { getAuthPIN, getJWTSigningKey } from './oci/secrets';
 
-if (!process.env.JWT_SECRET) {
-  throw new Error('JWT_SECRET environment variable must be set');
-}
-const JWT_SECRET = new TextEncoder().encode(process.env.JWT_SECRET);
+let JWT_SECRET: Uint8Array;
+getJWTSigningKey()
+  .then(key => {
+    JWT_SECRET = new TextEncoder().encode(key);
+  })
+  .catch(err => {
+    console.error('Failed to retrieve JWT signing key:', err);
+    process.exit(1);
+  });
 
-if (!process.env.AUTH_PIN) {
-  throw new Error('AUTH_PIN environment variable must be set for authentication.');
-}
-const VALID_PIN = process.env.AUTH_PIN;
+let VALID_PIN: string;
+getAuthPIN()
+  .then(pin => {
+    VALID_PIN = pin;
+  })
+  .catch(err => {
+    console.error('Failed to retrieve auth PIN:', err);
+    process.exit(1);
+  });
+
 const TOKEN_EXPIRY = '30d'; // Token expiry duration
 
 export async function login(req: Request, res: Response) {
