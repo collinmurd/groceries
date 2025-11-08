@@ -2,7 +2,7 @@
 import dotenv from 'dotenv';
 dotenv.config();
 
-import express, { Request, Response , Application } from 'express';
+import express, { Request, Response, Application } from 'express';
 import mongoose from 'mongoose';
 
 import { ItemData, Item } from './models/item'
@@ -11,6 +11,7 @@ import { pinoHttp } from 'pino-http';
 import { pino } from 'pino';
 import { Feature, FeatureData } from './models/feature';
 import { login, authenticateToken } from './auth';
+import { parseIngredients } from './ai';
 
 const MONGO_HOST = process.env.MONGO_HOST || '127.0.0.1';
 const ENV = process.env.ENV || 'dev';
@@ -48,13 +49,13 @@ app.use((req, res, next) => {
 
   res.header('Access-Control-Allow-Headers', 'Origin, X-Requested-With, Content-Type, Accept, Authorization');
   res.header('Access-Control-Allow-Methods', 'GET, POST, OPTIONS, PUT, DELETE');
-  
+
   // Handle preflight requests
   if (req.method === 'OPTIONS') {
     res.sendStatus(200);
     return;
   }
-  
+
   next();
 });
 
@@ -65,9 +66,13 @@ app.get('/', (req: Request, res: Response) => {
 // Auth routes
 app.post('/auth/login', login);
 
+// AI routes
+app.post('/ai/parse-ingredients', parseIngredients);
+
 // Protected routes - all API endpoints require authentication
 app.use('/items', authenticateToken);
 app.use('/features', authenticateToken);
+app.use('/ai', authenticateToken);
 
 ////////// Items
 
@@ -78,7 +83,7 @@ app.get('/items', async (req: Request, res: Response) => {
 });
 
 app.post('/items', (req: Request<any, any, ItemData>, res: Response<IItem | string>) => {
-  const data = new Item({...req.body});
+  const data = new Item({ ...req.body });
   data.save()
     .then(data => res.send(data.dto()))
     .catch(err => {
@@ -91,7 +96,7 @@ app.post('/items', (req: Request<any, any, ItemData>, res: Response<IItem | stri
 });
 
 app.post('/items:batchDelete', (req: Request<any, any, string[]>, res: Response) => {
-  Item.deleteMany({_id: { $in: req.body }})
+  Item.deleteMany({ _id: { $in: req.body } })
     .then(_ => res.status(204).send())
     .catch(err => {
       res.status(500).send(INTERNAL_SERVER_ERROR)
@@ -99,7 +104,7 @@ app.post('/items:batchDelete', (req: Request<any, any, string[]>, res: Response)
 });
 
 app.put('/items/:itemId', (req: Request<any, any, ItemData>, res: Response) => {
-  Item.findByIdAndUpdate(req.params.itemId, {...req.body}, {new: true})
+  Item.findByIdAndUpdate(req.params.itemId, { ...req.body }, { new: true })
     .then(data => {
       if (data) {
         res.send(data.dto())
@@ -127,7 +132,7 @@ app.delete('/items/:itemId', (req: Request<any, any, ItemData>, res: Response) =
 ////////// Features
 
 app.post('/features', (req: Request<any, any, FeatureData>, res: Response) => {
-  const data = new Feature({...req.body});
+  const data = new Feature({ ...req.body });
   data.save()
     .then(data => res.send(data.dto()))
     .catch(err => {
@@ -146,7 +151,7 @@ app.get('/features', (req: Request, res: Response) => {
 });
 
 app.put('/features/:featureId', (req: Request<any, any, FeatureData>, res: Response) => {
-  Feature.findByIdAndUpdate(req.params.featureId, {...req.body}, {new: true})
+  Feature.findByIdAndUpdate(req.params.featureId, { ...req.body }, { new: true })
     .then(data => {
       if (data) {
         res.send(data.dto())
@@ -162,11 +167,11 @@ app.put('/features/:featureId', (req: Request<any, any, FeatureData>, res: Respo
 function initFeatures() {
   // define features
   const features = [
-    {name: 'default-sections', enabled: true},
+    { name: 'default-sections', enabled: true },
   ];
 
   features.forEach(feature => {
-    Feature.findOne({name: feature.name})
+    Feature.findOne({ name: feature.name })
       .then(data => {
         if (!data) {
           const newFeature = new Feature(feature);
