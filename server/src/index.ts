@@ -66,12 +66,12 @@ app.get('/', (req: Request, res: Response) => {
 // Auth routes
 app.post('/auth/login', login);
 
-// AI routes
-app.post('/ai/parse-ingredients', parseIngredients);
-
 // Protected routes - all API endpoints require authentication
 app.use('/items', authenticateToken);
 app.use('/features', authenticateToken);
+app.post('/ai/parse-ingredients', parseIngredients);
+
+// AI routes
 app.use('/ai', authenticateToken);
 
 ////////// Items
