@@ -62,7 +62,7 @@ export async function parseIngredients(recipeText: string): Promise<ParsedIngred
       const ingredients: ParsedIngredientsResponse = JSON.parse((response.chatResult.chatResponse as genai.models.CohereChatResponse).text);
       return ingredients;
     } catch (e) {
-      throw new Error(`Failed to parse response from Generative AI service: ${(response.chatResult.chatResponse as genai.models.CohereChatResponse).text}`);
+      throw new Error('Failed to parse response from Generative AI service. Response format was invalid.');
     }
   } else {
     throw new Error('No response from Generative AI service');
