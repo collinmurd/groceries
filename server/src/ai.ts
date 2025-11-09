@@ -1,5 +1,5 @@
 import * as inference from './oci/generative-ai-inference';
-import { Request, Response, NextFunction } from 'express';
+import { Request, Response } from 'express';
 
 interface ParseIngredientsRequest {
   recipeText: string;
