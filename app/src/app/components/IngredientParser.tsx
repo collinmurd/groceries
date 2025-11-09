@@ -110,16 +110,22 @@ const IngredientListDisplay = forwardRef<HTMLDivElement, IngredientListDisplayPr
 
     const handleSubmit = async () => {
       setLoading(true);
-      for (const index of selectedIndicies) {
-        await api.createItem({
-          id: null,
-          description: ingredients[index].name,
-          section: ingredients[index].cat,
-          checked: false
-        })
+      try {
+        for (const index of selectedIndicies) {
+          await api.createItem({
+            id: null,
+            description: ingredients[index].name,
+            section: ingredients[index].cat,
+            checked: false
+          })
+        }
+        setLoading(false);
+        finished();
+      } catch (error) {
+        setLoading(false);
+        // Optionally, show an error message to the user here
+        console.error("Failed to add one or more ingredients:", error);
       }
-      setLoading(false);
-      finished();
     }
 
     return (
