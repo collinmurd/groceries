@@ -101,3 +101,8 @@ export async function parseIngredientsWithText(recipeText: string): Promise<Ingr
   const response = await call('POST', '/ai/parse-ingredients', { recipeText });
   return response.items;
 }
+
+export async function parseIngredientsWithUrl(recipeUrl: string): Promise<IngredientParserResult[]> {
+  const response = await call('POST', '/ai/parse-ingredients', { recipeUrl });
+  return response.items;
+}
