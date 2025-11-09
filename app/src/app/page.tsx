@@ -34,8 +34,8 @@ function App() {
             </Link>
           </ActionIcon>
           <LogoutButton />
-          <ActionIcon variant="subtle" size="xl" aria-label="ai">
-            <IconAi onClick={open} />
+          <ActionIcon variant="subtle" size="xl" aria-label="ai" onClick={open}>
+            <IconAi />
           </ActionIcon>
         </Group>
       </div>
