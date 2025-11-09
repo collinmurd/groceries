@@ -11,3 +11,8 @@ export interface IFeature {
   name: string,
   enabled: boolean
 }
+
+export interface IngredientParserResult {
+  name: string,
+  cat: string
+}

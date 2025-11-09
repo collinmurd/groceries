@@ -1,0 +1,72 @@
+
+import * as genai from "oci-generativeaiinference";
+import { getAuthProvider } from "./authProvider";
+import { DEFAULT_SECTIONS } from "@groceries/shared/constants";
+import { IngredientParserResult } from "@groceries/shared";
+
+const COMPARTMENT_ID = process.env.OCI_COMPARTMENT_ID || "";
+const ON_DEMAND_SERVING_MODE: genai.models.ServingMode = {
+  servingType: 'ON_DEMAND',
+  // @ts-ignore oci types suck
+  modelId: process.env.OCI_INFERENCE_MODEL_ID || ""
+}
+const PARSE_INGREDIENTS_PROMPT = `Below, I am sending a recipe that I copied from an online article. The list that you output will be fed into my grocery list application. I also want you to categorize each ingredient into one of these options: ${DEFAULT_SECTIONS.join(", ")}. Don't be afraid to put an item into the "Other" category if it doesn't fit. Only include amounts if they will be necessary for me to do my shopping. For example, include weight for meats or the number of onions, but don't include the amount of a spice or normal pantry items. If you decide to include the amount and the amount has units, use Imperial units. If an ingredient is optional, indicate that. The format of the ingredient should be: "Ingredient name (amount if necessary) (optional if necessary)".`
+
+export type ParsedIngredientsResponse = {
+  items: IngredientParserResult[]
+}
+export async function parseIngredients(recipeText: string): Promise<ParsedIngredientsResponse> {
+  const generativeAiChatClient = new genai.GenerativeAiInferenceClient({
+    authenticationDetailsProvider: await getAuthProvider()
+  });
+
+  const chatRequest: genai.requests.ChatRequest = {
+    chatDetails: {
+      compartmentId: COMPARTMENT_ID,
+      servingMode: ON_DEMAND_SERVING_MODE,
+      chatRequest: {
+        apiFormat: 'COHERE',
+        maxTokens: 1000,
+        message: PARSE_INGREDIENTS_PROMPT + "\n\n" + recipeText,
+        responseFormat: {
+          type: "JSON_OBJECT",
+          schema: {
+            type: "object",
+            required: [
+              "items"
+            ],
+            properties: {
+              items: {
+                type: "array",
+                items: {
+                  type: "object",
+                  required: ["name", "cat"],
+                  properties: {
+                    name: { type: "string" },
+                    cat: { type: "string", enum: DEFAULT_SECTIONS }
+                  },
+                }
+              }
+            }
+          }
+        }
+      }
+    }
+  }
+
+
+
+  const response = await generativeAiChatClient.chat(chatRequest) as null | genai.responses.ChatResponse;
+  if (response) {
+    try {
+      const ingredients: ParsedIngredientsResponse = JSON.parse((response.chatResult.chatResponse as genai.models.CohereChatResponse).text);
+      return ingredients;
+    } catch (e) {
+      throw new Error('Failed to parse response from Generative AI service. Response format was invalid.');
+    }
+  } else {
+    throw new Error('No response from Generative AI service');
+  }
+}
+
+
