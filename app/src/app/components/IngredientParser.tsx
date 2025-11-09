@@ -1,4 +1,4 @@
-import { Button, Checkbox, LoadingOverlay, SegmentedControl, Textarea, TextInput } from "@mantine/core";
+import { Box, Button, Checkbox, LoadingOverlay, SegmentedControl, Textarea, TextInput } from "@mantine/core";
 import { useState } from "react";
 import * as api from "../../services/api";
 
@@ -36,7 +36,7 @@ export function IngredientParser({ finished }: IngredientParserProps) {
   }
 
   return (
-    <div>
+    <Box pos="relative">
       <LoadingOverlay visible={loading} zIndex={1000} overlayProps={{ radius: "sm", blur: 2 }} loaderProps={{ type: 'dots' }} />
       <h2>AI Ingredient Parser</h2>
       <p>Either paste a recipe below, or a link to a recipe.</p>
@@ -76,7 +76,7 @@ export function IngredientParser({ finished }: IngredientParserProps) {
         <Button style={{ marginTop: 20 }} onClick={parseIngredients}>Parse Ingredients</Button>
       </div>
       {parsedIngredients.length > 0 && <IngredientListDisplay ingredients={parsedIngredients} setLoading={setLoading} finished={finished} />}
-    </div>
+    </Box >
   );
 }
 
