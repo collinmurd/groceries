@@ -6,7 +6,7 @@ interface ParseIngredientsRequest {
 }
 
 export async function parseIngredients(req: Request, res: Response) {
-  const { recipeText } = await req.body as ParseIngredientsRequest;
+  const { recipeText } = req.body as ParseIngredientsRequest;
 
   try {
     const ingredients = await inference.parseIngredients(recipeText);
