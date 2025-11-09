@@ -10,7 +10,7 @@ import { Item } from '../Item/Item';
 import { FeaturesContext } from '../../../context/featuresContext';
 import { SetErrorContext } from '../../../context/errorContext';
 
-const defaultSections = ['Produce', 'Meat', 'Dairy', 'Frozen', 'Other'];
+const defaultSections = ['Produce', 'Meat', 'Dairy', 'Frozen', 'Shelved', 'Other'];
 
 export function List() {
   const [items, setItems] = useState<IItem[]>([]);
@@ -69,7 +69,7 @@ export function List() {
   function updateItem(item: IItem) {
     var itemToUpdate = items.find(i => i.id === item.id);
     if (itemToUpdate) {
-      itemToUpdate = {...item}
+      itemToUpdate = { ...item }
     }
 
     setItems([...items]);
@@ -84,8 +84,8 @@ export function List() {
 
   function clearAllItems() {
     batchDeleteItems(items
-        .filter(i => i.id)
-        .map(i => i.id!))
+      .filter(i => i.id)
+      .map(i => i.id!))
       .then(() => {
         setItems([]);
       });
@@ -93,8 +93,8 @@ export function List() {
 
   function clearCheckedItems() {
     batchDeleteItems(items
-        .filter(i => i.checked)
-        .map(i => i.id!))
+      .filter(i => i.checked)
+      .map(i => i.id!))
       .then(() => {
         setItems([...items.filter(i => !i.checked)]);
       });
@@ -106,10 +106,10 @@ export function List() {
       key={section}
       name={section}
       addNewItem={addNewItem}>
-        {items
-          .filter(i => i.section === section)
-          .map(i => <Item key={i.id} item={i} removeItem={removeItem} updateItemState={updateItem} edit={false} />)}
-      </Section>
+      {items
+        .filter(i => i.section === section)
+        .map(i => <Item key={i.id} item={i} removeItem={removeItem} updateItemState={updateItem} edit={false} />)}
+    </Section>
   );
 
   if (loading) {
@@ -125,14 +125,14 @@ export function List() {
           <Button onClick={handleNewSectionClicked}>Add Section</Button>
           <ClearItems clearAllItems={clearAllItems} clearCheckedItems={clearCheckedItems} />
         </div>
-        {addingSection && <NewSectionInput addNewSection={addNewSection}/>}
+        {addingSection && <NewSectionInput addNewSection={addNewSection} />}
         {displayedSections}
       </div>
     );
   }
 }
 
-function NewSectionInput(props: {addNewSection: (name: string) => void}) {
+function NewSectionInput(props: { addNewSection: (name: string) => void }) {
   const [sectionName, setSectionName] = useState("");
 
   useExitOnEscape(() => props.addNewSection(sectionName));
