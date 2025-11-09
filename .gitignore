@@ -88,6 +88,10 @@ web_modules/
 .next
 out
 
+# TypeScript build output in root
+/src/
+/build/
+
 # Nuxt.js build / generate output
 .nuxt
 dist
