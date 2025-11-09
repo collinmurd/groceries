@@ -30,13 +30,13 @@ function getToken() {
 
 async function call(method: HttpMethod, path: string, body: any = null) {
   var headers = new Headers();
-  
+
   // Add auth header if token exists
   const token = getToken();
   if (token) {
     headers.append('Authorization', `Bearer ${token}`);
   }
-  
+
   var opts: RequestInit = {
     method: method,
     headers: headers
@@ -71,7 +71,7 @@ export async function getItems(): Promise<IItem[]> {
 }
 
 export async function createItem(item: IItem): Promise<IItem> {
-  const { id, ...data} = item;
+  const { id, ...data } = item;
   return call('POST', '/items', data);
 }
 
@@ -95,4 +95,9 @@ export async function getFeatures() {
 export async function updateFeature(feature: IFeature) {
   const { id, ...data } = feature;
   return call('PUT', `/features/${feature.id}`, data);
+}
+
+export async function parseIngredientsWithText(recipeText: string): Promise<string[]> {
+  const response = await call('POST', '/ai/parse-ingredients', { recipeText });
+  return response.items;
 }
