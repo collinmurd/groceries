@@ -97,7 +97,7 @@ export async function updateFeature(feature: IFeature) {
   return call('PUT', `/features/${feature.id}`, data);
 }
 
-export async function parseIngredientsWithText(recipeText: string): Promise<string[]> {
+export async function parseIngredientsWithText(recipeText: string): Promise<{ name: string, cat: string }[]> {
   const response = await call('POST', '/ai/parse-ingredients', { recipeText });
   return response.items;
 }

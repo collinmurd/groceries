@@ -14,7 +14,7 @@ const PARSE_INGREDIENTS_PROMPT = `Below, I am sending a recipe that I copied fro
 export type ParsedIngredientsResponse = {
   items: {
     name: string,
-    category: string
+    cat: string
   }[]
 }
 export async function parseIngredients(recipeText: string): Promise<ParsedIngredientsResponse> {
@@ -42,10 +42,10 @@ export async function parseIngredients(recipeText: string): Promise<ParsedIngred
                 type: "array",
                 items: {
                   type: "object",
-                  required: ["name", "category"],
+                  required: ["name", "cat"],
                   properties: {
                     name: { type: "string" },
-                    category: { type: "string", enum: DEFAULT_SECTIONS }
+                    cat: { type: "string", enum: DEFAULT_SECTIONS }
                   },
                 }
               }
