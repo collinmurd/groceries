@@ -28,6 +28,9 @@ jobs:
     - name: Install dependencies
       run: |
         npm install
+    - name: Build shared packages
+      run: |
+        npm run build --workspace=shared
     - name: Run Unit tests
       run: |
         npm run test --workspace=${{ inputs.component }}
