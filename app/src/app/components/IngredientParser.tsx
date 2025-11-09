@@ -26,13 +26,14 @@ export function IngredientParser({ finished }: IngredientParserProps) {
     setErrorMessage(null);
     setLoading(true);
     const input = inputMode === 'paste' ? pasteInput : linkInput;
+    const method = inputMode === 'paste' ? api.parseIngredientsWithText : api.parseIngredientsWithUrl;
     if (!input) {
       setErrorMessage("Input cannot be empty.");
       setLoading(false);
       return;
     }
 
-    api.parseIngredientsWithText(input)
+    method(input)
       .then(ingredients => {
         setParsedIngredients(ingredients);
         setLoading(false);
