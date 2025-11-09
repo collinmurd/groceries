@@ -8,6 +8,7 @@ import { IconAi, IconSettings } from '@tabler/icons-react';
 import { LogoutButton } from './components/LogoutButton';
 import { IngredientParser } from './components/IngredientParser';
 import { useDisclosure } from '@mantine/hooks';
+import { useState } from 'react';
 
 export default function Page() {
   return <App />;
@@ -15,9 +16,15 @@ export default function Page() {
 
 function App() {
   const [drawerOpened, { open, close }] = useDisclosure(false);
+  const [refreshKey, setRefreshKey] = useState(0);
+
+  const ingredientParserFinished = () => {
+    setRefreshKey(prev => prev + 1);
+    close();
+  }
 
   return (
-    <div>
+    <div key={refreshKey}>
       <List />
       <div style={{ display: 'flex', justifyContent: 'center', marginTop: 20, marginBottom: 20 }}>
         <Group gap="md">
@@ -33,7 +40,7 @@ function App() {
         </Group>
       </div>
       <Drawer opened={drawerOpened} onClose={close} padding="xl" size="xl">
-        <IngredientParser />
+        <IngredientParser finished={ingredientParserFinished} />
       </Drawer>
     </div>
   );

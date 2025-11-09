@@ -1,36 +1,43 @@
-import { Button, SegmentedControl, Textarea, TextInput } from "@mantine/core";
+import { Button, Checkbox, LoadingOverlay, SegmentedControl, Textarea, TextInput } from "@mantine/core";
 import { useState } from "react";
-import { parseIngredientsWithText } from "../../services/api";
+import * as api from "../../services/api";
 
-export function IngredientParser() {
+export interface IngredientParserProps {
+  finished: () => void;
+}
+
+export function IngredientParser({ finished }: IngredientParserProps) {
   const [inputMode, setInputMode] = useState<string>('paste');
   const [pasteInput, setPasteInput] = useState<string>('');
   const [linkInput, setLinkInput] = useState<string>('');
   const [errorMessage, setErrorMessage] = useState<string | null>(null);
   const [parsedIngredients, setParsedIngredients] = useState<string[]>([]);
+  const [loading, setLoading] = useState<boolean>(false);
 
   const parseIngredients = () => {
     setErrorMessage(null);
-    // Placeholder for parsing logic
-    console.log("Parsing ingredients...");
+    setLoading(true);
     const input = inputMode === 'paste' ? pasteInput : linkInput;
     if (!input) {
       setErrorMessage("Input cannot be empty.");
+      setLoading(false);
       return;
     }
 
-    parseIngredientsWithText(input)
+    api.parseIngredientsWithText(input)
       .then(ingredients => {
-        console.log("Parsed ingredients:", ingredients);
         setParsedIngredients(ingredients);
+        setLoading(false);
       })
       .catch(err => {
         setErrorMessage("Error parsing ingredients: " + err.message);
+        setLoading(false);
       });
   }
 
   return (
     <div>
+      <LoadingOverlay visible={loading} zIndex={1000} overlayProps={{ radius: "sm", blur: 2 }} loaderProps={{ type: 'dots' }} />
       <h2>AI Ingredient Parser</h2>
       <p>Either paste a recipe below, or a link to a recipe.</p>
       <div>
@@ -68,22 +75,54 @@ export function IngredientParser() {
       <div>
         <Button style={{ marginTop: 20 }} onClick={parseIngredients}>Parse Ingredients</Button>
       </div>
-      <div>
-        {parsedIngredients.length > 0 && <IngredientListDisplay ingredients={parsedIngredients} />}
-      </div>
+      {parsedIngredients.length > 0 && <IngredientListDisplay ingredients={parsedIngredients} setLoading={setLoading} finished={finished} />}
     </div>
   );
 }
 
-function IngredientListDisplay({ ingredients }: { ingredients: string[] }) {
+interface IngredientListDisplayProps {
+  ingredients: string[],
+  setLoading: (loading: boolean) => void,
+  finished: () => void
+}
+
+function IngredientListDisplay({ ingredients, setLoading, finished }: IngredientListDisplayProps) {
+  const [selectedIndicies, setSelectedIndices] = useState<Set<number>>(new Set());
+
+  const handleCheckboxChange = (index: number) => {
+    const newSet = new Set(selectedIndicies);
+    if (newSet.has(index)) {
+      newSet.delete(index);
+    } else {
+      newSet.add(index);
+    }
+    setSelectedIndices(newSet);
+  }
+
+  const handleSubmit = async () => {
+    setLoading(true);
+    for (const index of selectedIndicies) {
+      await api.createItem({
+        id: null,
+        description: ingredients[index],
+        section: 'Other',
+        checked: false
+      })
+    }
+    setLoading(false);
+    finished();
+  }
+
   return (
     <div>
       <h3>Parsed Ingredients</h3>
-      <ul>
-        {ingredients.map((ingredient, index) => (
-          <li key={index}>{ingredient}</li>
-        ))}
-      </ul>
+      <p>Check all ingredients you want to add to the list</p>
+      {ingredients.map((ingredient, index) => (
+        <div key={index} style={{ marginBottom: 5 }}>
+          <Checkbox type="checkbox" checked={selectedIndicies.has(index)} value={ingredient} label={ingredient} onChange={() => handleCheckboxChange(index)} />
+        </div>
+      ))}
+      <Button style={{ marginTop: 20 }} onClick={handleSubmit}>Add Selected Ingredients to List</Button>
     </div>
   );
 }
