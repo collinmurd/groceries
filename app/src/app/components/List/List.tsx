@@ -3,7 +3,8 @@ import { batchDeleteItems, createItem, deleteItem, getItems } from '../../../ser
 import { Section } from '../Section/Section';
 import { Button, Loader, Menu, TextInput } from '@mantine/core';
 import { useExitOnEscape } from '../../../hooks';
-import { DEFAULT_SECTIONS, IItem } from '@groceries/shared';
+import { IItem } from '@groceries/shared';
+import { DEFAULT_SECTIONS } from '@groceries/shared/constants';
 
 import classes from './List.module.css';
 import { Item } from '../Item/Item';

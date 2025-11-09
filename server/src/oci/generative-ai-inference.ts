@@ -1,7 +1,8 @@
 
 import * as genai from "oci-generativeaiinference";
 import { getAuthProvider } from "./authProvider";
-import { DEFAULT_SECTIONS } from "@groceries/shared";
+import { DEFAULT_SECTIONS } from "@groceries/shared/constants";
+import { IngredientParserResult } from "@groceries/shared";
 
 const COMPARTMENT_ID = 'ocid1.tenancy.oc1..aaaaaaaahj7lgknz3zmkz2tabqidllay6c5bjjfydenbwyevkc6jieaevekq'
 const ON_DEMAND_SERVING_MODE: genai.models.ServingMode = {
@@ -12,10 +13,7 @@ const ON_DEMAND_SERVING_MODE: genai.models.ServingMode = {
 const PARSE_INGREDIENTS_PROMPT = `Below, I am sending a recipe that I copied from an online article. The list that you output will be fed into my grocery list application. Only include amounts if they will be necessary for me to do my shopping. For example, include weight for meats or the number of onions, but don't include the amount of a spice. I also want you to categorize each ingredient into one of these options: Produce, Meat, Dairy, Frozen, Shelved, Other. Don't be afraid to put an item into the "Other" category if it doesn't fit.`
 
 export type ParsedIngredientsResponse = {
-  items: {
-    name: string,
-    cat: string
-  }[]
+  items: IngredientParserResult[]
 }
 export async function parseIngredients(recipeText: string): Promise<ParsedIngredientsResponse> {
   const generativeAiChatClient = new genai.GenerativeAiInferenceClient({

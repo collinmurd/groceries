@@ -1,6 +1,7 @@
 import { Box, Button, Checkbox, LoadingOverlay, SegmentedControl, Textarea, TextInput } from "@mantine/core";
 import { forwardRef, useEffect, useRef, useState } from "react";
 import * as api from "../../services/api";
+import { IngredientParserResult } from "@groceries/shared";
 
 export interface IngredientParserProps {
   finished: () => void;
@@ -11,7 +12,7 @@ export function IngredientParser({ finished }: IngredientParserProps) {
   const [pasteInput, setPasteInput] = useState<string>('');
   const [linkInput, setLinkInput] = useState<string>('');
   const [errorMessage, setErrorMessage] = useState<string | null>(null);
-  const [parsedIngredients, setParsedIngredients] = useState<string[]>([]);
+  const [parsedIngredients, setParsedIngredients] = useState<IngredientParserResult[]>([]);
   const [loading, setLoading] = useState<boolean>(false);
   const ingredientListRef = useRef<HTMLDivElement>(null);
 
@@ -88,7 +89,7 @@ export function IngredientParser({ finished }: IngredientParserProps) {
 }
 
 interface IngredientListDisplayProps {
-  ingredients: string[],
+  ingredients: IngredientParserResult[],
   setLoading: (loading: boolean) => void,
   finished: () => void
 }
@@ -112,8 +113,8 @@ const IngredientListDisplay = forwardRef<HTMLDivElement, IngredientListDisplayPr
       for (const index of selectedIndicies) {
         await api.createItem({
           id: null,
-          description: ingredients[index],
-          section: 'Other',
+          description: ingredients[index].name,
+          section: ingredients[index].cat,
           checked: false
         })
       }
@@ -127,7 +128,7 @@ const IngredientListDisplay = forwardRef<HTMLDivElement, IngredientListDisplayPr
         <p>Check all ingredients you want to add to the list</p>
         {ingredients.map((ingredient, index) => (
           <div key={index} style={{ marginBottom: 5 }}>
-            <Checkbox type="checkbox" checked={selectedIndicies.has(index)} value={ingredient} label={ingredient} onChange={() => handleCheckboxChange(index)} />
+            <Checkbox type="checkbox" checked={selectedIndicies.has(index)} label={ingredient.name} onChange={() => handleCheckboxChange(index)} />
           </div>
         ))}
         <Button style={{ marginTop: 20 }} onClick={handleSubmit}>Add Selected Ingredients to List</Button>

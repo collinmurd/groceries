@@ -1,4 +1,4 @@
-import { IFeature, IItem } from "@groceries/shared";
+import { IFeature, IItem, IngredientParserResult } from "@groceries/shared";
 
 export class GroceriesApiError extends Error {
   constructor(msg: string) {
@@ -97,7 +97,7 @@ export async function updateFeature(feature: IFeature) {
   return call('PUT', `/features/${feature.id}`, data);
 }
 
-export async function parseIngredientsWithText(recipeText: string): Promise<{ name: string, cat: string }[]> {
+export async function parseIngredientsWithText(recipeText: string): Promise<IngredientParserResult[]> {
   const response = await call('POST', '/ai/parse-ingredients', { recipeText });
   return response.items;
 }
