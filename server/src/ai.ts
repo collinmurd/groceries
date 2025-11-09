@@ -10,7 +10,7 @@ export async function parseIngredients(req: Request, res: Response) {
 
   try {
     const ingredients = await inference.parseIngredients(recipeText);
-    res.status(200).json({ items: ingredients });
+    res.status(200).json(ingredients);
   } catch (error) {
     res.status(500).json({ error: (error as Error).message });
   }

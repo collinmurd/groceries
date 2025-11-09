@@ -3,14 +3,12 @@ import { batchDeleteItems, createItem, deleteItem, getItems } from '../../../ser
 import { Section } from '../Section/Section';
 import { Button, Loader, Menu, TextInput } from '@mantine/core';
 import { useExitOnEscape } from '../../../hooks';
-import { IItem } from '@groceries/shared';
+import { DEFAULT_SECTIONS, IItem } from '@groceries/shared';
 
 import classes from './List.module.css';
 import { Item } from '../Item/Item';
 import { FeaturesContext } from '../../../context/featuresContext';
 import { SetErrorContext } from '../../../context/errorContext';
-
-const defaultSections = ['Produce', 'Meat', 'Dairy', 'Frozen', 'Shelved', 'Other'];
 
 export function List() {
   const [items, setItems] = useState<IItem[]>([]);
@@ -28,7 +26,7 @@ export function List() {
         var tempSections = new Set<string>();
         data.forEach(i => tempSections.add(i.section));
         if (features.check('default-sections')) {
-          defaultSections.forEach(s => tempSections.add(s));
+          DEFAULT_SECTIONS.forEach(s => tempSections.add(s));
         }
         setSections([...tempSections]);
 

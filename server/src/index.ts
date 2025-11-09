@@ -69,10 +69,10 @@ app.post('/auth/login', login);
 // Protected routes - all API endpoints require authentication
 app.use('/items', authenticateToken);
 app.use('/features', authenticateToken);
-app.post('/ai/parse-ingredients', parseIngredients);
+app.use('/ai', authenticateToken);
 
 // AI routes
-app.use('/ai', authenticateToken);
+app.post('/ai/parse-ingredients', parseIngredients);
 
 ////////// Items
 
