@@ -5,9 +5,8 @@ import { DEFAULT_SECTIONS } from "@groceries/shared/constants";
 import { IngredientParserResult } from "@groceries/shared";
 
 const COMPARTMENT_ID = process.env.OCI_COMPARTMENT_ID || "";
-const ON_DEMAND_SERVING_MODE: genai.models.ServingMode = {
+const ON_DEMAND_SERVING_MODE: genai.models.OnDemandServingMode = {
   servingType: 'ON_DEMAND',
-  // @ts-ignore oci types suck
   modelId: process.env.OCI_INFERENCE_MODEL_ID || ""
 }
 const PARSE_INGREDIENTS_PROMPT = `Below, I am sending a recipe that I copied from an online article. The list that you output will be fed into my grocery list application. I also want you to categorize each ingredient into one of these options: ${DEFAULT_SECTIONS.join(", ")}. Don't be afraid to put an item into the "Other" category if it doesn't fit. Only include amounts if they will be necessary for me to do my shopping. For example, include weight for meats or the number of onions, but don't include the amount of a spice or normal pantry items. If you decide to include the amount and the amount has units, use Imperial units. If an ingredient is optional, indicate that. The format of the ingredient should be: "Ingredient name (amount if necessary) (optional if necessary)".`

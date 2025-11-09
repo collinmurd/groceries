@@ -11,7 +11,7 @@ COPY server/package.json server/tsconfig.json server/
 RUN npm install
 
 # build shared library
-COPY shared/index.ts shared/
+COPY shared/ shared/
 RUN  npm run build --workspace=shared
 
 # build server
