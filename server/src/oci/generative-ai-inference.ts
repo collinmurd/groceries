@@ -10,7 +10,7 @@ const ON_DEMAND_SERVING_MODE: genai.models.ServingMode = {
   // @ts-ignore oci types suck
   modelId: process.env.OCI_INFERENCE_MODEL_ID || ""
 }
-const PARSE_INGREDIENTS_PROMPT = `Below, I am sending a recipe that I copied from an online article. The list that you output will be fed into my grocery list application. Only include amounts if they will be necessary for me to do my shopping. For example, include weight for meats or the number of onions, but don't include the amount of a spice. I also want you to categorize each ingredient into one of these options: Produce, Meat, Dairy, Frozen, Shelved, Other. Don't be afraid to put an item into the "Other" category if it doesn't fit.`
+const PARSE_INGREDIENTS_PROMPT = `Below, I am sending a recipe that I copied from an online article. The list that you output will be fed into my grocery list application. Only include amounts if they will be necessary for me to do my shopping. For example, include weight for meats or the number of onions, but don't include the amount of a spice. I also want you to categorize each ingredient into one of these options: ${DEFAULT_SECTIONS.join(", ")}. Don't be afraid to put an item into the "Other" category if it doesn't fit.`
 
 export type ParsedIngredientsResponse = {
   items: IngredientParserResult[]
