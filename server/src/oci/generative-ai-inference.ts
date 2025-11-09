@@ -4,11 +4,11 @@ import { getAuthProvider } from "./authProvider";
 import { DEFAULT_SECTIONS } from "@groceries/shared/constants";
 import { IngredientParserResult } from "@groceries/shared";
 
-const COMPARTMENT_ID = 'ocid1.tenancy.oc1..aaaaaaaahj7lgknz3zmkz2tabqidllay6c5bjjfydenbwyevkc6jieaevekq'
+const COMPARTMENT_ID = process.env.OCI_COMPARTMENT_ID || "";
 const ON_DEMAND_SERVING_MODE: genai.models.ServingMode = {
   servingType: 'ON_DEMAND',
   // @ts-ignore oci types suck
-  modelId: 'ocid1.generativeaimodel.oc1.us-chicago-1.amaaaaaask7dceyapnibwg42qjhwaxrlqfpreueirtwghiwvv2whsnwmnlva'
+  modelId: process.env.OCI_INFERENCE_MODEL_ID || ""
 }
 const PARSE_INGREDIENTS_PROMPT = `Below, I am sending a recipe that I copied from an online article. The list that you output will be fed into my grocery list application. Only include amounts if they will be necessary for me to do my shopping. For example, include weight for meats or the number of onions, but don't include the amount of a spice. I also want you to categorize each ingredient into one of these options: Produce, Meat, Dairy, Frozen, Shelved, Other. Don't be afraid to put an item into the "Other" category if it doesn't fit.`
 

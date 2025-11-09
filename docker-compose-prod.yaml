@@ -1,4 +1,3 @@
-
 services:
   server:
     image: ghcr.io/collinmurd/groceries-server:latest
@@ -6,6 +5,8 @@ services:
       - "8000:8000"
     environment:
       MONGO_HOST: mongodb
+      OCI_COMPARTMENT_ID: ocid1.tenancy.oc1..aaaaaaaahj7lgknz3zmkz2tabqidllay6c5bjjfydenbwyevkc6jieaevekq
+      OCI_INFERENCE_MODEL_ID: ocid1.generativeaimodel.oc1.us-chicago-1.amaaaaaask7dceyapnibwg42qjhwaxrlqfpreueirtwghiwvv2whsnwmnlva
 
   app:
     image: ghcr.io/collinmurd/groceries-app:latest
