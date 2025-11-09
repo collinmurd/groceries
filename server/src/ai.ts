@@ -6,8 +6,8 @@ import * as cheerio from 'cheerio';
 const logger = pino();
 
 interface ParseIngredientsRequest {
-  recipeText: string;
-  recipeUrl: string;
+  recipeText?: string;
+  recipeUrl?: string;
 }
 
 export async function parseIngredients(req: Request, res: Response) {
@@ -22,8 +22,8 @@ export async function parseIngredients(req: Request, res: Response) {
     return;
   }
 
-  const input = recipeText || await getRecipeTextFromUrl(recipeUrl);
-  logger.info(`Received input for ingredient parsing. Tokens: ${input.length}`);
+  const input = recipeText || await getRecipeTextFromUrl(recipeUrl!);
+  logger.info(`Received input for ingredient parsing. Characters: ${input.length}`);
 
   try {
     const ingredients = await inference.parseIngredients(input);
@@ -34,10 +34,18 @@ export async function parseIngredients(req: Request, res: Response) {
 }
 
 async function getRecipeTextFromUrl(url: string): Promise<string> {
+  if (!url.startsWith('https://')) {
+    throw new Error('Invalid URL format.');
+  }
+
   // Fetch the HTML content from the URL
   const response = await fetch(url);
   if (!response.ok) {
     throw new Error(`Failed to fetch URL: ${response.status} ${response.statusText}`);
+  }
+
+  if (!response.headers.get('content-type')?.includes('text/html')) {
+    throw new Error('URL does not point to an HTML document.');
   }
 
   const html = await response.text();
