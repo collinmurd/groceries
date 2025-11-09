@@ -15,7 +15,7 @@ COPY shared/ shared/
 RUN  npm run build --workspace=shared
 
 # build server
-COPY server/src server/
+COPY server/src/ server/src/
 RUN npm run build --workspace=server
 
 # prod build
@@ -32,4 +32,4 @@ COPY --from=build /base/server/dist ./dist
 
 EXPOSE 80
 
-CMD ["node", "/opt/server/dist/index.js"]
+CMD ["node", "/opt/server/dist/src/index.js"]
