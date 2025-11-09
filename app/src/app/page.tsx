@@ -24,8 +24,8 @@ function App() {
   }
 
   return (
-    <div key={refreshKey}>
-      <List />
+    <div>
+      <List key={refreshKey} />
       <div style={{ display: 'flex', justifyContent: 'center', marginTop: 20, marginBottom: 20 }}>
         <Group gap="md">
           <ActionIcon variant="subtle" size="xl" aria-label="features">
