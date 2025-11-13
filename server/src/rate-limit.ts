@@ -1,5 +1,6 @@
 
 import { Request, Response, NextFunction } from 'express';
+import { TimeBoxedRecordStore } from './utils/time-boxed-record-store';
 
 /**
  * Extract the real client IP address from the request
@@ -29,53 +30,40 @@ function getClientIP(req: Request): string {
   return req.socket.remoteAddress || 'unknown';
 }
 
-// In-memory rate limit store
-// Consider using Redis for production/multi-instance deployments
 interface RateLimitRecord {
   count: number;
-  resetTime: number;
 }
-
-const rateLimitStore = new Map<string, RateLimitRecord>();
-
-// Cleanup old entries every 15 minutes to prevent memory leaks
-setInterval(() => {
-  const now = Date.now();
-  for (const [ip, record] of rateLimitStore.entries()) {
-    if (now > record.resetTime) {
-      rateLimitStore.delete(ip);
-    }
-  }
-}, 15 * 60 * 1000);
 
 /**
  * Rate limiting middleware to prevent abuse
  * Limits requests per IP address within a time window
  */
 export function rateLimitByIPMiddleware(rph: number) {
+  const windowMs = 60 * 60 * 1000; // 1 hour
+  const rateLimitStore = new TimeBoxedRecordStore<RateLimitRecord>(windowMs);
+
   return (req: Request, res: Response, next: NextFunction) => {
     const ip = getClientIP(req);
-    const now = Date.now();
-    const windowMs = 60 * 60 * 1000; // Per 1 hour
-
     const record = rateLimitStore.get(ip);
 
-    if (!record || now > record.resetTime) {
-      // New window - reset the counter
-      rateLimitStore.set(ip, { count: 1, resetTime: now + windowMs });
+    if (!record) {
+      // First request from this IP in the current window
+      rateLimitStore.set(ip, { count: 1 });
       return next();
     }
 
     if (record.count >= rph) {
-      const retryAfter = Math.ceil((record.resetTime - now) / 1000);
-      res.set('Retry-After', String(retryAfter));
+      // Rate limit exceeded
+      res.set('Retry-After', String(Math.ceil(windowMs / 1000)));
       return res.status(429).json({
         error: 'Too many requests, please try again later',
-        retryAfter
+        retryAfter: Math.ceil(windowMs / 1000)
       });
     }
 
+    // Increment counter
     record.count++;
+    rateLimitStore.set(ip, record);
     next();
   }
 }
