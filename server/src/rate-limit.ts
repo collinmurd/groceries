@@ -42,8 +42,7 @@ interface RateLimitRecord {
  * Limits requests per IP address within a time window
  */
 export function rateLimitByIPMiddleware(rph: number) {
-  // const windowMs = 60 * 60 * 1000; // 1 hour
-  const windowMs = 60 * 1000; // 1 minute 
+  const windowMs = 60 * 60 * 1000; // 1 hour
   const rateLimitStore = new TimeBoxedRecordStore<RateLimitRecord>(windowMs);
 
   return (req: Request, res: Response, next: NextFunction) => {
