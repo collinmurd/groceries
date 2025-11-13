@@ -1,6 +1,9 @@
 
+import { pino } from 'pino';
 import { Request, Response, NextFunction } from 'express';
 import { TimeBoxedRecordStore } from './utils/time-boxed-record-store';
+
+const logger = pino();
 
 /**
  * Extract the real client IP address from the request
@@ -39,7 +42,8 @@ interface RateLimitRecord {
  * Limits requests per IP address within a time window
  */
 export function rateLimitByIPMiddleware(rph: number) {
-  const windowMs = 60 * 60 * 1000; // 1 hour
+  // const windowMs = 60 * 60 * 1000; // 1 hour
+  const windowMs = 60 * 1000; // 1 minute 
   const rateLimitStore = new TimeBoxedRecordStore<RateLimitRecord>(windowMs);
 
   return (req: Request, res: Response, next: NextFunction) => {
@@ -54,6 +58,7 @@ export function rateLimitByIPMiddleware(rph: number) {
 
     if (record.count >= rph) {
       // Rate limit exceeded
+      logger.warn(`Rate limit exceeded for IP: ${ip} for route ${req.originalUrl}: ${record.count} requests in ${windowMs / 1000} seconds`);
       res.set('Retry-After', String(Math.ceil(windowMs / 1000)));
       return res.status(429).json({
         error: 'Too many requests, please try again later',

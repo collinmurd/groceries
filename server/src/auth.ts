@@ -1,8 +1,11 @@
 import { SignJWT, jwtVerify } from 'jose';
+import { pino } from 'pino';
 import { Request, Response, NextFunction } from 'express';
 import { getAuthPIN, getJWTSigningKey } from './oci/secrets';
 import { TimeBoxedRecordStore } from './utils/time-boxed-record-store';
 import { Feature } from './models/feature';
+
+const logger = pino();
 
 let JWT_SECRET: Uint8Array;
 getJWTSigningKey()
@@ -30,6 +33,7 @@ const failedAttemptsStore = new TimeBoxedRecordStore<number>(15 * 60 * 1000); //
 const STORE_KEY = 'login';
 
 async function lockApp() {
+  logger.warn('Locking application due to too many failed login attempts');
   Feature.findOneAndUpdate({ name: 'app-locked' }, { enabled: true }, { new: true })
     .then(data => {
       if (data) {
@@ -72,13 +76,14 @@ export async function login(req: Request, res: Response) {
 
     res.json({ accessToken: token });
   } catch (error) {
-    console.error('Login error:', error);
+    logger.error('Login error:', error);
     res.status(500).json({ error: 'Internal server error' });
   }
 }
 
 export async function authenticateToken(req: Request, res: Response, next: NextFunction) {
   if (await isAppLocked()) {
+    logger.info('Authentication attempt while application is locked');
     return res.status(401).json({ error: 'Application is locked due to too many failed login attempts. Application must be unlocked.' });
   }
 
