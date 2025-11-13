@@ -32,18 +32,22 @@ const TOKEN_EXPIRY = '30d'; // Token expiry duration
 const failedAttemptsStore = new TimeBoxedRecordStore<number>(15 * 60 * 1000); // 15 minutes
 const STORE_KEY = 'login';
 
+// record previous lookup for lock status. used to tell if the app was unlocked upon the next login attempt
+let previousLockStatus = false;
+
 async function lockApp() {
   logger.warn('Locking application due to too many failed login attempts');
   Feature.findOneAndUpdate({ name: 'app-locked' }, { enabled: true }, { new: true })
     .then(data => {
       if (data) {
-        console.log('Application locked');
+        logger.info('Application locked');
       } else {
-        console.error('Feature not found');
+        logger.error('Feature not found');
       }
+      previousLockStatus = true;
     })
     .catch(err => {
-      console.error('Error locking application:', err);
+      logger.error('Error locking application:', err);
     });
 }
 
@@ -55,8 +59,18 @@ async function isAppLocked() {
 export async function login(req: Request, res: Response) {
   try {
     if ((failedAttemptsStore.get(STORE_KEY) || 0) >= 5) {
-      await lockApp();
-      return res.status(401).json({ error: 'Too many failed login attempts. Application must be unlocked.' });
+
+      // if app was previously locked but has been unlocked
+      if (!(await isAppLocked()) && previousLockStatus) {
+        // reset previous lock status
+        previousLockStatus = false;
+        // clear failed attempts on unlock
+        failedAttemptsStore.clear();
+        logger.info('Application unlocked, cleared failed login attempts');
+      } else {
+        await lockApp();
+        return res.status(401).json({ error: 'Too many failed login attempts. Application must be unlocked.' });
+      }
     }
 
     const { pin } = req.body;
