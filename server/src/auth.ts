@@ -56,7 +56,7 @@ export async function authenticateToken(req: Request, res: Response, next: NextF
 
   try {
     const { payload } = await jwtVerify(token, JWT_SECRET);
-    
+
     if (!payload.authorized) {
       return res.status(401).json({ error: 'Invalid token' });
     }

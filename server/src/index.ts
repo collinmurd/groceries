@@ -12,6 +12,7 @@ import { pino } from 'pino';
 import { Feature, FeatureData } from './models/feature';
 import { login, authenticateToken } from './auth';
 import { parseIngredients } from './ai';
+import { rateLimitByIPMiddleware } from './rate-limit';
 
 const MONGO_HOST = process.env.MONGO_HOST || '127.0.0.1';
 const ENV = process.env.ENV || 'dev';
@@ -21,6 +22,9 @@ const port = process.env.PORT || 8000;
 const logger = pino();
 
 const INTERNAL_SERVER_ERROR = 'Internal Server Error';
+
+// Trust proxy to get real client IP from X-Forwarded-* headers (nginx)
+app.set('trust proxy', true);
 
 app.use(express.json());
 app.use(pinoHttp({
@@ -72,7 +76,8 @@ app.use('/features', authenticateToken);
 app.use('/ai', authenticateToken);
 
 // AI routes
-app.post('/ai/parse-ingredients', parseIngredients);
+// Rate limited to 10 requests per hour per IP
+app.post('/ai/parse-ingredients', rateLimitByIPMiddleware(10), parseIngredients);
 
 ////////// Items
 
