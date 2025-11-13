@@ -4,15 +4,12 @@
 
 set -e
 
-# Default to dev environment
-ENV=${1:-dev}
-
 # Determine the Docker Compose file and container name
 COMPOSE_FILE="docker-compose-prod.yaml"
 CONTAINER_PREFIX="groceries"
 
 # name of mongo container in compose and local
-MONGO_CONTAINER="groceries-mongo"
+MONGO_CONTAINER="groceries-mongodb-1"
 
 if [ -z "$MONGO_CONTAINER" ]; then
     echo "Error: MongoDB container not found."

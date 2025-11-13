@@ -1,0 +1,27 @@
+name: Unlock App
+
+on:
+  workflow_dispatch:
+
+permissions:
+  packages: write
+
+jobs:
+  unlock_app:
+    runs-on: ubuntu-latest
+    steps:
+    - name: Configure ssh key
+      env:
+        PRIVATE_KEY: ${{ secrets.GROCERIES_PRIVATE_KEY }}
+      run: |
+        echo "$PRIVATE_KEY" > id_rsa_groceries
+        chmod 600 id_rsa_groceries
+    - name: Unlock application
+      env:
+        HOST: "149.130.209.48"
+      run: |
+        ssh -i id_rsa_groceries -o "StrictHostKeyChecking no" groceries@$HOST "
+          curl -o unlock-app.sh https://raw.githubusercontent.com/collinmurd/groceries/main/bin/unlock-app.sh
+          chmod +x unlock-app.sh
+          ./unlock-app.sh 
+        "
