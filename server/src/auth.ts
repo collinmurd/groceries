@@ -1,6 +1,8 @@
 import { SignJWT, jwtVerify } from 'jose';
 import { Request, Response, NextFunction } from 'express';
 import { getAuthPIN, getJWTSigningKey } from './oci/secrets';
+import { TimeBoxedRecordStore } from './utils/time-boxed-record-store';
+import { Feature } from './models/feature';
 
 let JWT_SECRET: Uint8Array;
 getJWTSigningKey()
@@ -24,11 +26,40 @@ getAuthPIN()
 
 const TOKEN_EXPIRY = '30d'; // Token expiry duration
 
+const failedAttemptsStore = new TimeBoxedRecordStore<number>(15 * 60 * 1000); // 15 minutes
+const STORE_KEY = 'login';
+
+async function lockApp() {
+  Feature.findOneAndUpdate({ name: 'app-locked' }, { enabled: true }, { new: true })
+    .then(data => {
+      if (data) {
+        console.log('Application locked');
+      } else {
+        console.error('Feature not found');
+      }
+    })
+    .catch(err => {
+      console.error('Error locking application:', err);
+    });
+}
+
+async function isAppLocked() {
+  const feature = await Feature.findOne({ name: 'app-locked' });
+  return feature ? feature.enabled : false;
+}
+
 export async function login(req: Request, res: Response) {
   try {
-    const { pin } = req.body;
+    if ((failedAttemptsStore.get(STORE_KEY) || 0) >= 5) {
+      await lockApp();
+      return res.status(401).json({ error: 'Too many failed login attempts. Application must be unlocked.' });
+    }
 
+    const { pin } = req.body;
     if (!pin || pin !== VALID_PIN) {
+      // Track failed attempts
+      const attempts = failedAttemptsStore.get(STORE_KEY) || 0;
+      failedAttemptsStore.set(STORE_KEY, attempts + 1);
       return res.status(401).json({ error: 'Invalid PIN' });
     }
 
@@ -47,6 +78,10 @@ export async function login(req: Request, res: Response) {
 }
 
 export async function authenticateToken(req: Request, res: Response, next: NextFunction) {
+  if (await isAppLocked()) {
+    return res.status(401).json({ error: 'Application is locked due to too many failed login attempts. Application must be unlocked.' });
+  }
+
   const authHeader = req.headers['authorization'];
   const token = authHeader && authHeader.split(' ')[1]; // Bearer TOKEN
 

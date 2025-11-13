@@ -172,7 +172,8 @@ app.put('/features/:featureId', (req: Request<any, any, FeatureData>, res: Respo
 function initFeatures() {
   // define features
   const features = [
-    { name: 'default-sections', enabled: true },
+    { name: 'app-locked', enabled: false }, // true locks the app. will be enabled after too many failed login attempts
+    { name: 'default-sections', enabled: true }, // defines whether default sections are displayed
   ];
 
   features.forEach(feature => {
