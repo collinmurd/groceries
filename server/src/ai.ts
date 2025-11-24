@@ -22,10 +22,10 @@ export async function parseIngredients(req: Request, res: Response) {
     return;
   }
 
-  const input = recipeText || await getRecipeTextFromUrl(recipeUrl!);
-  logger.info(`Received input for ingredient parsing. Characters: ${input.length}`);
-
   try {
+    const input = recipeText || await getRecipeTextFromUrl(recipeUrl!);
+    logger.info(`Received input for ingredient parsing. Characters: ${input.length}`);
+
     const ingredients = await inference.parseIngredients(input);
     res.status(200).json(ingredients);
   } catch (error) {
