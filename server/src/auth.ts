@@ -89,7 +89,7 @@ export async function login(req: Request, res: Response) {
       .sign(JWT_SECRET);
 
     res.json({ accessToken: token });
-  } catch (error) {
+  } catch (error: any) {
     logger.error('Login error:', error);
     res.status(500).json({ error: 'Internal server error' });
   }
@@ -116,8 +116,8 @@ export async function authenticateToken(req: Request, res: Response, next: NextF
     }
 
     next();
-  } catch (error) {
-    console.error('Token verification error:', error);
+  } catch (error: any) {
+    logger.error('Token verification error:', error);
     return res.status(401).json({ error: 'Invalid or expired token' });
   }
 }

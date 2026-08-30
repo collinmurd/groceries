@@ -16,7 +16,7 @@ export const getAuthProvider = async (): common.AuthenticationDetailsProvider =>
       logger.info(`OCI config file not found at ${OCI_CONFIG_FILE}, using instance principal authentication`);
       return await new common.InstancePrincipalsAuthenticationDetailsProviderBuilder().build();
     }
-  } catch (err) {
+  } catch (err: any) {
     logger.error('Error checking OCI config file:', err);
     throw err;
   }
